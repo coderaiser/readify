@@ -10,9 +10,6 @@ npm i readify
 
 ## How to use?
 
-### read
-Read content of directory with permisions and sizes.
-
 ```js
 var readify = require('readify');
 
