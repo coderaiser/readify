@@ -11,7 +11,7 @@
   "dependencies": {
     "format-io": "~0.9.4",
     "nicki": "~1.0.0",
-    "util-io": "~1.2.4"
+    "util-io": "~1.3.0"
   },
   "license": "MIT",
   "main": "lib/readify.js"
