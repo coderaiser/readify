@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "format-io": "~0.9.4",
-    "nicki": "~1.0.0",
+    "nicki": "~1.2.2",
     "util-io": "~1.6.3"
   },
   "license": "MIT",
