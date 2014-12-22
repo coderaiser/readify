@@ -9,9 +9,10 @@
     "url": "git://github.com/coderaiser/readify.git"
   },
   "dependencies": {
+    "checkup": "~1.0.2",
+    "execon": "~1.0.1",
     "format-io": "~0.9.4",
-    "nicki": "~1.2.2",
-    "util-io": "~1.6.3"
+    "nicki": "~1.2.2"
   },
   "license": "MIT",
   "main": "lib/readify.js"
