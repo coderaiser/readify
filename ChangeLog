@@ -1,3 +1,9 @@
+2014.12.22, v1.1.2
+
+feature:
+- (package) rm util-io; add checkup, execon
+
+
 2014.11.20, v1.1.1
 
 feature:
