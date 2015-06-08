@@ -9,7 +9,6 @@
     "url": "git://github.com/coderaiser/readify.git"
   },
   "dependencies": {
-    "checkup": "~1.0.2",
     "execon": "~1.2.0",
     "format-io": "~0.9.4",
     "nicki": "~1.2.2"
