@@ -23,5 +23,6 @@
   "dependencies": {
     "execon": "~1.2.2",
     "format-io": "~0.9.6"
-  }
+  },
+  "version": "1.3.0"
 }
