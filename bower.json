@@ -1,0 +1,27 @@
+{
+  "name": "readify",
+  "homepage": "https://github.com/coderaiser/readify",
+  "authors": [
+    "coderaiser <mnemonic.enemy@gmail.com>"
+  ],
+  "description": "Read directory content with file attributes: size, owner, mode",
+  "main": "lib/readify.js",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "read",
+    "directory"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "modules"
+  ],
+  "dependencies": {
+    "execon": "~1.2.2",
+    "format-io": "~0.9.6"
+  }
+}

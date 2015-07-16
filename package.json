@@ -13,6 +13,10 @@
     "format-io": "~0.9.4",
     "nicki": "~1.2.2"
   },
+  "keywords": [
+    "read",
+    "directory"
+  ],
   "license": "MIT",
   "main": "lib/readify.js"
 }
