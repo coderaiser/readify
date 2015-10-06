@@ -23,7 +23,6 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "devDependencies": {
-    "execon": "^1.2.7",
     "tape": "^4.2.1"
   }
 }
