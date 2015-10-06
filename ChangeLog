@@ -1,3 +1,13 @@
+2015.10.06, v1.3.1
+
+fix:
+- (readify) fillJSON: files.sort
+- (readify) changeUIDToName: double call callback
+
+feature:
+- (readify) sort(files) -> files.sort
+
+
 2015.07.16, v1.3.0
 
 feature:
