@@ -24,6 +24,41 @@
         });
     });
     
+    test('result: should be sorted by name folders then files', function(t) {
+        readify('.', (error, json) => {
+            t.notOk(error, 'no error');
+            
+            let all   = json.files,
+                
+                isDir   = file => file.size === 'dir',
+                
+                not     = function(fn) {
+                    return function() {
+                        fn.apply(null, arguments);
+                    };
+                },
+                
+                isFile  = not(isDir),
+                
+                files   = all.filter(isFile),
+                dirs    = all.filter(isDir),
+                
+                names   = dirs
+                    .concat(files)
+                    .map(file => 
+                        file.name
+                    ),
+                    
+                sorted = names.sort((a, b) =>
+                    a > b ? 1 : -1
+                );
+            
+            t.deepEqual(names, sorted);
+            
+            t.end();
+        });
+    });
+    
     test('result: files should have fields name, size, owner, mode', t => {
         readify('.', (error, json) => {
             let files       = json.files,
