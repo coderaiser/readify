@@ -76,6 +76,22 @@
         });
     });
     
+    test('result: file names should not be empty', t => {
+        readify('.', (error, json) => {
+            let files       = json.files,
+                check       = () =>
+                    files.filter((file) => 
+                        !file.name
+                    ).forEach(file => {
+                        throw Error('Filename should not be empty!\n' + JSON.stringify(file));
+                    });
+            
+            t.notOk(error, 'no error');
+            t.doesNotThrow(check, 'should not throw');
+            t.end();
+        });
+    });
+    
     test('arguments: exception when no path', t => {
        t.throws(readify, /path should be string!/, 'should throw when no path');
        t.end();
