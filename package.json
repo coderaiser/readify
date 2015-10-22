@@ -9,7 +9,11 @@
     "url": "git://github.com/coderaiser/readify.git"
   },
   "scripts": {
-    "test": "tape test/*.js"
+    "test": "tape test/*.js",
+    "bundle": "browserify lib/readify.js > dist/readify.js",
+    "build": "npm run bundle && npm run minify",
+    "minify": "minify dist/readify.js > dist/readify.min.js",
+    "wisdom": "npm run build"
   },
   "dependencies": {
     "execon": "~1.2.0",
@@ -23,6 +27,8 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "devDependencies": {
+    "browserify": "~11.2.0",
+    "minify": "~1.4.22",
     "tape": "^4.2.1"
   }
 }
