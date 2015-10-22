@@ -1,0 +1,47 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/home/coderaiser/.nvm/versions/node/v4.2.1/bin/node',
+1 verbose cli   '/home/coderaiser/.nvm/versions/node/v4.2.1/bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'wisdom',
+1 verbose cli   '--',
+1 verbose cli   '--patch' ]
+2 info using npm@3.3.6
+3 info using node@v4.2.1
+4 verbose run-script [ 'prewisdom', 'wisdom', 'postwisdom' ]
+5 info lifecycle readify@1.3.7~prewisdom: readify@1.3.7
+6 silly lifecycle readify@1.3.7~prewisdom: no script for prewisdom, continuing
+7 info lifecycle readify@1.3.7~wisdom: readify@1.3.7
+8 verbose lifecycle readify@1.3.7~wisdom: unsafe-perm in lifecycle true
+9 verbose lifecycle readify@1.3.7~wisdom: PATH: /home/coderaiser/.nvm/versions/node/v4.2.1/lib/node_modules/npm/bin/node-gyp-bin:/home/coderaiser/readify/node_modules/.bin:/home/coderaiser/.nvm/versions/node/v4.2.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/rvm/bin
+10 verbose lifecycle readify@1.3.7~wisdom: CWD: /home/coderaiser/readify
+11 silly lifecycle readify@1.3.7~wisdom: Args: [ '-c', 'npm run build "--patch"' ]
+12 silly lifecycle readify@1.3.7~wisdom: Returned: code: 1  signal: null
+13 info lifecycle readify@1.3.7~wisdom: Failed to exec wisdom script
+14 verbose stack Error: readify@1.3.7 wisdom: `npm run build "--patch"`
+14 verbose stack Exit status 1
+14 verbose stack     at EventEmitter.<anonymous> (/home/coderaiser/.nvm/versions/node/v4.2.1/lib/node_modules/npm/lib/utils/lifecycle.js:233:16)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at EventEmitter.emit (events.js:172:7)
+14 verbose stack     at ChildProcess.<anonymous> (/home/coderaiser/.nvm/versions/node/v4.2.1/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+14 verbose stack     at emitTwo (events.js:87:13)
+14 verbose stack     at ChildProcess.emit (events.js:172:7)
+14 verbose stack     at maybeClose (internal/child_process.js:818:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+15 verbose pkgid readify@1.3.7
+16 verbose cwd /home/coderaiser/readify
+17 error Linux 3.13.0-24-generic
+18 error argv "/home/coderaiser/.nvm/versions/node/v4.2.1/bin/node" "/home/coderaiser/.nvm/versions/node/v4.2.1/bin/npm" "run" "wisdom" "--" "--patch"
+19 error node v4.2.1
+20 error npm  v3.3.6
+21 error code ELIFECYCLE
+22 error readify@1.3.7 wisdom: `npm run build "--patch"`
+22 error Exit status 1
+23 error Failed at the readify@1.3.7 wisdom script 'npm run build "--patch"'.
+23 error This is most likely a problem with the readify package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     npm run build "--patch"
+23 error You can get their info via:
+23 error     npm owner ls readify
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]
