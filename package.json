@@ -18,7 +18,8 @@
   "dependencies": {
     "execon": "~1.2.0",
     "format-io": "~0.9.4",
-    "nicki": "~1.2.2"
+    "nicki": "~1.2.2",
+    "squad": "~1.1.0"
   },
   "keywords": [
     "read",
