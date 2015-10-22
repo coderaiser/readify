@@ -1,23 +1,32 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (process){
 /* global Filer */
-/* global Format */
 
 (function(global) {
     'use strict';
     
     var fs,
+        squad,
         format,
         exec,
         nicki,
         WIN,
         platform,
-        funcEmpty       = function() {};
+        funcEmpty       = function() {},
+        
+        map             = function(fn, array) {
+            return array.map(fn);
+        },
+        
+        sort            = function(fn, array) {
+            return array.sort(fn);
+        };
     
     if (typeof module !== 'undefined' && module.exports) {
         module.exports  = readify;
         format          = require('format-io');
         exec            = require('execon');
+        squad           = require('squad');
         platform        = process.platform;
         WIN             = platform === 'win32';
         
@@ -31,9 +40,16 @@
     } else {
         global.readify  = readify;
         fs              = new Filer.FileSystem();
-        format          = Format;
+        format          = window.Format;
         exec            = window.exec;
     }
+    
+    var parseStats  = exec.with(map, parseStat);
+    
+    /* sorting on Win and node v0.8.0 */
+    var sortFiles   = exec.with(sort, function(a, b) {
+        return a.name > b.name ? 1 : -1;
+    });
     
     function readify(path, callback) {
         check(path, callback);
@@ -120,18 +136,12 @@
      * @param params - { files, stats, path }
      */
     function fillJSON(path, stats, callback) {
-        var files   = stats.map(parseStat),
-            json    = {
+        var processFiles    = squad(changeOrder, sortFiles, parseStats),
+            json            = {
                 path    : '',
-                files   : []
+                files   : processFiles(stats)
             };
         
-        /* sorting on Win and node v0.8.0 */
-        files       = files.sort(function(a, b) {
-            return a.name > b.name ? 1 : -1;
-        });
-        
-        json.files  = changeOrder(files);
         json.path   = format.addSlashToEnd(path);
         
         changeUIDToName(json, function(error, files) {
@@ -185,7 +195,7 @@
 })(this);
 
 }).call(this,require('_process'))
-},{"_process":51,"execon":17,"format-io":18,"fs":9,"nicki":33}],2:[function(require,module,exports){
+},{"_process":51,"execon":17,"format-io":18,"fs":9,"nicki":33,"squad":59}],2:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -546,7 +556,7 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-},{"util/":64}],3:[function(require,module,exports){
+},{"util/":65}],3:[function(require,module,exports){
 module.exports = balanced;
 function balanced(a, b, str) {
   var bal = 0;
@@ -1761,7 +1771,7 @@ util.inherits(InflateRaw, Zlib);
 util.inherits(Unzip, Zlib);
 
 }).call(this,require('_process'),require("buffer").Buffer)
-},{"./binding":7,"_process":51,"_stream_transform":56,"assert":2,"buffer":10,"util":64}],9:[function(require,module,exports){
+},{"./binding":7,"_process":51,"_stream_transform":56,"assert":2,"buffer":10,"util":65}],9:[function(require,module,exports){
 arguments[4][6][0].apply(exports,arguments)
 },{"dup":6}],10:[function(require,module,exports){
 (function (global){
@@ -5609,7 +5619,7 @@ Glob.prototype._stat2 = function (f, abs, er, stat, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./common.js":19,"./sync.js":21,"_process":51,"assert":2,"events":16,"fs":9,"inflight":23,"inherits":24,"minimatch":29,"once":34,"path":47,"path-is-absolute":48,"util":64}],21:[function(require,module,exports){
+},{"./common.js":19,"./sync.js":21,"_process":51,"assert":2,"events":16,"fs":9,"inflight":23,"inherits":24,"minimatch":29,"once":34,"path":47,"path-is-absolute":48,"util":65}],21:[function(require,module,exports){
 (function (process){
 module.exports = globSync
 globSync.GlobSync = GlobSync
@@ -6073,7 +6083,7 @@ GlobSync.prototype._makeAbs = function (f) {
 }
 
 }).call(this,require('_process'))
-},{"./common.js":19,"./glob.js":20,"_process":51,"assert":2,"fs":9,"minimatch":29,"path":47,"path-is-absolute":48,"util":64}],22:[function(require,module,exports){
+},{"./common.js":19,"./glob.js":20,"_process":51,"assert":2,"fs":9,"minimatch":29,"path":47,"path-is-absolute":48,"util":65}],22:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -6207,7 +6217,7 @@ function slice (args) {
 }
 
 }).call(this,require('_process'))
-},{"_process":51,"once":34,"wrappy":66}],24:[function(require,module,exports){
+},{"_process":51,"once":34,"wrappy":67}],24:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -6398,7 +6408,7 @@ module.exports = Array.isArray || function (arr) {
 })();
 
 }).call(this,require('_process'),"/node_modules/ischanged/lib")
-},{"_process":51,"checkup":11,"debug":14,"fs":9,"mkdirp":30,"os":35,"readjson":57,"timem":60}],29:[function(require,module,exports){
+},{"_process":51,"checkup":11,"debug":14,"fs":9,"mkdirp":30,"os":35,"readjson":57,"timem":61}],29:[function(require,module,exports){
 module.exports = minimatch
 minimatch.Minimatch = Minimatch
 
@@ -7674,7 +7684,7 @@ function once (fn) {
   return f
 }
 
-},{"wrappy":66}],35:[function(require,module,exports){
+},{"wrappy":67}],35:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -14750,7 +14760,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":52,"_process":51,"buffer":10,"core-util-is":13,"events":16,"inherits":24,"isarray":27,"process-nextick-args":50,"string_decoder/":59,"util":6}],54:[function(require,module,exports){
+},{"./_stream_duplex":52,"_process":51,"buffer":10,"core-util-is":13,"events":16,"inherits":24,"isarray":27,"process-nextick-args":50,"string_decoder/":60,"util":6}],54:[function(require,module,exports){
 // a transform stream is a readable/writable stream where you do
 // something with the data.  Sometimes it's called a "filter",
 // but that's not a great name for it, since that implies a thing where
@@ -15471,7 +15481,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./_stream_duplex":52,"buffer":10,"core-util-is":13,"events":16,"inherits":24,"process-nextick-args":50,"util-deprecate":62}],56:[function(require,module,exports){
+},{"./_stream_duplex":52,"buffer":10,"core-util-is":13,"events":16,"inherits":24,"process-nextick-args":50,"util-deprecate":63}],56:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
 },{"./lib/_stream_transform.js":54}],57:[function(require,module,exports){
@@ -15514,7 +15524,7 @@ module.exports = require("./lib/_stream_transform.js")
     };
 })();
 
-},{"fs":9,"try-catch":61}],58:[function(require,module,exports){
+},{"fs":9,"try-catch":62}],58:[function(require,module,exports){
 (function (process){
 (function() {
     'use strict';
@@ -15885,7 +15895,65 @@ module.exports = require("./lib/_stream_transform.js")
 })();
 
 }).call(this,require('_process'))
-},{"_process":51,"assert":2,"child_process":9,"events":16,"glob":20,"path":47,"try-catch":61,"util":64,"win32":65}],59:[function(require,module,exports){
+},{"_process":51,"assert":2,"child_process":9,"events":16,"glob":20,"path":47,"try-catch":62,"util":65,"win32":66}],59:[function(require,module,exports){
+(function(global) {
+    'use strict';
+    
+    if (typeof module !== 'undefined' && module.exports)
+        module.exports  = squad;
+    else
+        global.squad    = squad;
+    
+    function squad() {
+        var funcs = []
+                .slice.call(arguments)
+                .reverse();
+                
+        check('function', funcs);
+        
+        return function() {
+            return funcs
+                .reduce(apply, arguments)
+                .pop();
+        };
+    }
+    
+    function apply(value, fn) {
+        return [fn.apply(null, value)];
+    }
+    
+    function check(type, array) {
+        var wrongType   = partial(wrong, type),
+            notType     = partial(notEqual, type);
+        
+        if (!array.length)
+            wrongType(type);
+        else
+            array
+                .map(getType)
+                .filter(notType)
+                .forEach(wrongType);
+    }
+    
+    function partial(fn, value) {
+        return fn.bind(null, value);
+    }
+    
+    function getType(item) {
+        return typeof item;
+    }
+    
+    function notEqual(a, b) {
+        return a !== b;
+    }
+    
+    function wrong(type) {
+        throw Error('fn should be ' + type + '!');
+    }
+    
+})(this);
+
+},{}],60:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16108,7 +16176,7 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":10}],60:[function(require,module,exports){
+},{"buffer":10}],61:[function(require,module,exports){
 (function () {
     'use strict';
     
@@ -16145,7 +16213,7 @@ function base64DetectIncompleteChar(buffer) {
     
 })();
 
-},{"fs":9}],61:[function(require,module,exports){
+},{"fs":9}],62:[function(require,module,exports){
 (function(global) {
     'use strict';
     
@@ -16168,7 +16236,7 @@ function base64DetectIncompleteChar(buffer) {
     
 })(this);
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 (function (global){
 
 /**
@@ -16239,14 +16307,14 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16836,7 +16904,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":63,"_process":51,"inherits":24}],65:[function(require,module,exports){
+},{"./support/isBuffer":64,"_process":51,"inherits":24}],66:[function(require,module,exports){
 (function (process){
 (function() {
     'use strict';
@@ -16966,7 +17034,7 @@ function hasOwnProperty(obj, prop) {
 })();
 
 }).call(this,require('_process'))
-},{"_process":51,"assert":2,"child_process":9,"pipe-io":49}],66:[function(require,module,exports){
+},{"_process":51,"assert":2,"child_process":9,"pipe-io":49}],67:[function(require,module,exports){
 // Returns a wrapper function that returns a wrapped callback
 // The wrapper function should do some stuff, and return a
 // presumably different callback function.
