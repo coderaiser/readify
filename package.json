@@ -27,8 +27,8 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "devDependencies": {
-    "browserify": "~11.2.0",
-    "minify": "~1.4.22",
+    "browserify": "^11.2.0",
+    "minify": "^1.4.22",
     "tape": "^4.2.1"
   }
 }
