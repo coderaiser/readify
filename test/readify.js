@@ -2,6 +2,8 @@
     'use strict';
     
     let readify = require('..'),
+        os      = require('os'),
+        fs      = require('fs'),
         test    = require('tape'),
         exec    = require('execon');
     
@@ -89,6 +91,24 @@
             t.notOk(error, 'no error');
             t.doesNotThrow(check, 'should not throw');
             t.end();
+        });
+    });
+    
+    test('result: read empty directory', function(t) {
+        var tmp = Math.random(),
+            dir = os.tmpdir() + '/readify-' + tmp;
+        
+        fs.mkdir(dir, function(error) {
+            t.notOk(error, 'directory created');
+            
+            readify(dir, function(error) {
+                t.notOk(error, 'successfully read');
+                
+                fs.rmdir(dir, function(error) {
+                    t.notOk(error, 'directory removed');
+                    t.end();
+                });
+            });
         });
     });
     
