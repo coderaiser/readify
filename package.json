@@ -10,7 +10,7 @@
   },
   "scripts": {
     "test": "tape test/*.js",
-    "bundle": "browserify lib/readify.js > dist/readify.js",
+    "bundle": "browserify lib/readify.js -s readify -u nicki --ng false > dist/readify.js",
     "build": "npm run bundle && npm run minify",
     "minify": "minify dist/readify.js > dist/readify.min.js",
     "wisdom": "npm run build"
