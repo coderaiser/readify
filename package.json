@@ -13,7 +13,10 @@
     "bundle": "browserify lib/readify.js -s readify -u nicki --ng false > dist/readify.js",
     "build": "npm run bundle && npm run minify",
     "minify": "minify dist/readify.js > dist/readify.min.js",
-    "wisdom": "npm run build"
+    "wisdom": "npm run build",
+    "report": "nyc report --reporter=text-lcov | coveralls",
+    "coverage": "nyc npm test",
+    "test": "tape test/*.js"
   },
   "dependencies": {
     "execon": "~1.2.0",
@@ -29,7 +32,9 @@
   "main": "lib/readify.js",
   "devDependencies": {
     "browserify": "^11.2.0",
+    "coveralls": "^2.11.6",
     "minify": "^2.0.0",
+    "nyc": "^5.6.0",
     "tape": "^4.2.1"
   }
 }

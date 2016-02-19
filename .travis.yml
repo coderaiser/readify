@@ -3,7 +3,7 @@ node_js:
     - 4
 
 script:
-  - npm test
+  - npm run report
 
 notifications:
     email:
