@@ -9,11 +9,11 @@
     "url": "git://github.com/coderaiser/readify.git"
   },
   "scripts": {
-    "test": "tape test/*.js",
     "bundle": "browserify lib/readify.js -s readify -u nicki --ng false > dist/readify.js",
     "build": "npm run bundle && npm run minify",
     "minify": "minify dist/readify.js > dist/readify.min.js",
     "wisdom": "npm run build",
+    "codestyle": "jshint lib test && jscs --esnext lib test",
     "report": "nyc report --reporter=text-lcov | coveralls",
     "coverage": "nyc npm test",
     "test": "tape test/*.js"
@@ -33,6 +33,8 @@
   "devDependencies": {
     "browserify": "^11.2.0",
     "coveralls": "^2.11.6",
+    "jscs": "^2.10.1",
+    "jshint": "^2.9.1",
     "minify": "^2.0.0",
     "nyc": "^5.6.0",
     "tape": "^4.2.1"
