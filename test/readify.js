@@ -47,7 +47,7 @@
                 
                 names   = dirs
                     .concat(files)
-                    .map(file => 
+                    .map(file =>
                         file.name
                     ),
                     
@@ -66,7 +66,7 @@
             let files       = json.files,
                 length      = files.length,
                 check       = () =>
-                    files.filter((file) => 
+                    files.filter((file) =>
                         Object.keys(file).join(':') === 'name:size:owner:mode'
                     ).length;
             
@@ -82,7 +82,7 @@
         readify('.', (error, json) => {
             let files       = json.files,
                 check       = () =>
-                    files.filter((file) => 
+                    files.filter((file) =>
                         !file.name
                     ).forEach(file => {
                         throw Error('Filename should not be empty!\n' + JSON.stringify(file));
