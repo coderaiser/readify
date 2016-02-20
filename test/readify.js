@@ -5,6 +5,7 @@
         os      = require('os'),
         fs      = require('fs'),
         test    = require('tape'),
+        sinon   = require('sinon'),
         exec    = require('execon');
     
     test('path: wrong', t => {
@@ -110,6 +111,36 @@
                 });
             });
         });
+    });
+    
+    test('filer in browser', (t) => {
+        let filer;
+        let readify;
+        
+        let before = () => {
+            filer = sinon.spy();
+            
+            global.Filer = {
+                FileSystem: filer
+            };
+            
+            global.window = {
+                Filer: global.Filer
+            };
+            
+            delete require.cache[require.resolve('..')];
+            readify = require('..');
+        };
+        
+        let after = () => {
+            delete global.window;
+            delete global.Filer;
+        };
+        
+        before();
+        t.ok(filer.called, 'Filer should have been called');
+        after();
+        t.end();
     });
     
     test('arguments: exception when no path', t => {
