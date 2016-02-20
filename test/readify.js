@@ -113,36 +113,6 @@
         });
     });
     
-    test('filer in browser', (t) => {
-        let filer;
-        let readify;
-        
-        let before = () => {
-            filer = sinon.spy();
-            
-            global.Filer = {
-                FileSystem: filer
-            };
-            
-            global.window = {
-                Filer: global.Filer
-            };
-            
-            delete require.cache[require.resolve('..')];
-            readify = require('..');
-        };
-        
-        let after = () => {
-            delete global.window;
-            delete global.Filer;
-        };
-        
-        before();
-        t.ok(filer.called, 'Filer should have been called');
-        after();
-        t.end();
-    });
-    
     test('arguments: exception when no path', t => {
        t.throws(readify, /path should be string!/, 'should throw when no path');
        t.end();
@@ -154,4 +124,76 @@
        t.throws(noCallback, /callback should be function!/, 'should throw when no callback');
        t.end();
     });
+    
+    test('readify stat: error', (t) => {
+        let stat = fs.stat;
+        let files = [{
+            name: 'readify.js',
+            size: '0b',
+            date: '',
+            owner: '',
+            mode: ''
+        }];
+        
+        fs.stat = (name, fn) => {
+            fn(Error('EBUSY: resource busy or locked'));
+        };
+        
+        readify(__dirname, (error, data) => {
+            t.notOk(error, 'no error when stat error');
+            
+            t.deepEqual(data.files, files, 'size, date, owner, mode should be empty');
+            
+            fs.stat = stat;
+            t.end();
+        });
+    });
+    
+    test('browser: filer', (t) => {
+        let filer = sinon.spy();
+        
+        before(filer);
+        t.ok(filer.called, 'Filer should be called');
+        after();
+        t.end();
+    });
+    
+    test('browser: nicki', (t) => {
+        before(function Filer() {
+            if (!(this instanceof Filer))
+                return new Filer();
+            
+            return fs;
+        });
+        
+        let nicki = sinon.spy();
+        
+        require.cache[require.resolve('nicki')] = nicki;
+        
+        let readify = require('..');
+        
+        readify(__dirname, (error) => {
+            t.notOk(error, 'should not be error');
+            t.notOk(nicki.called, 'nicki should not be called');
+            t.end();
+        });
+    });
+    
+    function before(filer) {
+        global.Filer = {
+            FileSystem: filer
+        };
+        
+        global.window = {
+            Filer: global.Filer
+        };
+        
+        delete require.cache[require.resolve('..')];
+        readify = require('..');
+    }
+        
+    function after() {
+        delete global.window;
+        delete global.Filer;
+    }
 })();
