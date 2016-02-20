@@ -61,18 +61,18 @@
         });
     });
     
-    test('result: files should have fields name, size, owner, mode', t => {
+    test('result: files should have fields name, size, date, owner, mode', t => {
         readify('.', (error, json) => {
             let files       = json.files,
                 length      = files.length,
                 check       = () =>
                     files.filter((file) =>
-                        Object.keys(file).join(':') === 'name:size:owner:mode'
+                        Object.keys(file).join(':') === 'name:size:date:owner:mode'
                     ).length;
             
             t.notOk(error, 'no error');
             
-            t.equal(check(), length, 'files array do not have fields: name, size, owner, mode');
+            t.equal(check(), length, 'files array do not have fields: name, size, date, owner, mode');
         
         t.end();
         });
