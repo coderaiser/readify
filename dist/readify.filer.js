@@ -11,7 +11,6 @@ var fs,
     format          = require('format-io'),
     exec            = require('execon'),
     squad           = require('squad'),
-    shortdate       = require('shortdate'),
     nicki,
     WIN,
     
@@ -88,7 +87,7 @@ function emptyStat() {
     return {
         mode        : 0,
         size        : 0,
-        mtime       : null,
+        mtime       : 0,
         isDirectory : function() {}
    };
 }
@@ -113,12 +112,12 @@ function parseStat(stat) {
     mode    = Number(modeStr) || '';
     isDir   = stat.isDirectory();
     size    = isDir ? 'dir' : stat.size;
-    mtime   = stat.mtime;
+    mtime   = stat.mtime || '';
     
     file = {
         'name'  : stat.name,
         'size'  : format.size(size),
-        'date'  : !mtime ? '' : shortdate(mtime),
+        'date'  : mtime,
         'owner' : owner,
         'mode'  : mode && format.permissions.symbolic(mode)
     };
@@ -190,7 +189,7 @@ function changeOrder(json) {
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/lib/readify.js","/lib")
-},{"_process":9,"buffer":4,"execon":5,"format-io":6,"fs":3,"nicki":undefined,"shortdate":10,"squad":11}],2:[function(require,module,exports){
+},{"_process":9,"buffer":4,"execon":6,"format-io":7,"fs":3,"nicki":undefined,"squad":10}],2:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
@@ -332,9 +331,11 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
  */
 /* eslint-disable no-proto */
 
+'use strict'
+
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
-var isArray = require('is-array')
+var isArray = require('isarray')
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -414,8 +415,10 @@ function Buffer (arg) {
     return new Buffer(arg)
   }
 
-  this.length = 0
-  this.parent = undefined
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    this.length = 0
+    this.parent = undefined
+  }
 
   // Common case.
   if (typeof arg === 'number') {
@@ -546,6 +549,10 @@ function fromJsonObject (that, object) {
 if (Buffer.TYPED_ARRAY_SUPPORT) {
   Buffer.prototype.__proto__ = Uint8Array.prototype
   Buffer.__proto__ = Uint8Array
+} else {
+  // pre-set for values that may exist in the future
+  Buffer.prototype.length = undefined
+  Buffer.prototype.parent = undefined
 }
 
 function allocate (that, length) {
@@ -695,10 +702,6 @@ function byteLength (string, encoding) {
   }
 }
 Buffer.byteLength = byteLength
-
-// pre-set for values that may exist in the future
-Buffer.prototype.length = undefined
-Buffer.prototype.parent = undefined
 
 function slowToString (encoding, start, end) {
   var loweredCase = false
@@ -1791,7 +1794,7 @@ function utf8ToBytes (string, units) {
       }
 
       // valid surrogate pair
-      codePoint = leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00 | 0x10000
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
     } else if (leadSurrogate) {
       // valid bmp char, but last char was a lead
       if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
@@ -1870,7 +1873,16 @@ function blitBuffer (src, dst, offset, length) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/buffer/index.js","/node_modules/buffer")
-},{"_process":9,"base64-js":2,"buffer":4,"ieee754":7,"is-array":8}],5:[function(require,module,exports){
+},{"_process":9,"base64-js":2,"buffer":4,"ieee754":8,"isarray":5}],5:[function(require,module,exports){
+(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/buffer/node_modules/isarray/index.js","/node_modules/buffer/node_modules/isarray")
+},{"_process":9,"buffer":4}],6:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 (function(global) {
     'use strict';
@@ -1974,10 +1986,10 @@ function blitBuffer (src, dst, offset, length) {
                 type        = getType(funcs);
             
             if (!funcs)
-                throw Error('funcs' + ERROR);
+                throw Error('funcs ' + ERROR);
             
             if (!callback)
-                throw Error('callback' + ERROR);
+                throw Error('callback ' + ERROR);
             
             switch(type) {
             case 'array':
@@ -2118,7 +2130,7 @@ function blitBuffer (src, dst, offset, length) {
 })(this);
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/execon/lib/exec.js","/node_modules/execon/lib")
-},{"_process":9,"buffer":4}],6:[function(require,module,exports){
+},{"_process":9,"buffer":4}],7:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 (function(global) {
     'use strict';
@@ -2285,7 +2297,7 @@ function blitBuffer (src, dst, offset, length) {
 })(this);
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/format-io/lib/format.js","/node_modules/format-io/lib")
-},{"_process":9,"buffer":4}],7:[function(require,module,exports){
+},{"_process":9,"buffer":4}],8:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -2373,43 +2385,6 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/ieee754/index.js","/node_modules/ieee754")
-},{"_process":9,"buffer":4}],8:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-
-/**
- * isArray
- */
-
-var isArray = Array.isArray;
-
-/**
- * toString
- */
-
-var str = Object.prototype.toString;
-
-/**
- * Whether or not the given `val`
- * is an array.
- *
- * example:
- *
- *        isArray([]);
- *        // > true
- *        isArray(arguments);
- *        // > false
- *        isArray('');
- *        // > false
- *
- * @param {mixed} val
- * @return {bool}
- */
-
-module.exports = isArray || function (val) {
-  return !! val && '[object Array]' == str.call(val);
-};
-
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/is-array/index.js","/node_modules/is-array")
 },{"_process":9,"buffer":4}],9:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 // shim for using process in browser
@@ -2507,40 +2482,6 @@ process.umask = function() { return 0; };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/process/browser.js","/node_modules/process")
 },{"_process":9,"buffer":4}],10:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
-'use strict';
-
-module.exports = function(date) {
-    date = date || new Date();
-    
-    check(date);
-     
-    var ret,
-        day     = date.getDate(),
-        month   = date.getMonth() + 1,
-        year    = date.getFullYear();
-        
-    if (month <= 9)
-        month   = '0' + month;
-    
-    if (day <= 9)
-        day     = '0' + day;
-    
-    ret         = year + '.' + month + '.' + day;
-    
-    return ret;
-};
-
-function check(date) {
-    var type = {}.toString.call(date);
-    
-    if (type && type !== '[object Date]')
-        throw Error('date should be Date!');
- }
-
-
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/shortdate/lib/shortdate.js","/node_modules/shortdate/lib")
-},{"_process":9,"buffer":4}],11:[function(require,module,exports){
-(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 (function(global) {
     'use strict';
     
@@ -2550,15 +2491,13 @@ function check(date) {
         global.squad    = squad;
     
     function squad() {
-        var funcs = []
-                .slice.call(arguments)
-                .reverse();
+        var funcs = [].slice.call(arguments);
                 
         check('function', funcs);
         
         return function() {
             return funcs
-                .reduce(apply, arguments)
+                .reduceRight(apply, arguments)
                 .pop();
         };
     }
