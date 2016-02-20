@@ -11,6 +11,7 @@ var fs,
     format          = require('format-io'),
     exec            = require('execon'),
     squad           = require('squad'),
+    shortdate       = require('shortdate'),
     nicki,
     WIN,
     
@@ -112,7 +113,9 @@ function parseStat(stat) {
     mode    = Number(modeStr) || '';
     isDir   = stat.isDirectory();
     size    = isDir ? 'dir' : stat.size;
-    mtime   = stat.mtime || '';
+    mtime   = !stat.mtime ? '' : shortdate(stat.mtime, {
+        order: 'little'
+    });
     
     file = {
         'name'  : stat.name,
@@ -189,7 +192,7 @@ function changeOrder(json) {
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/lib/readify.js","/lib")
-},{"_process":9,"buffer":4,"execon":6,"format-io":7,"fs":3,"nicki":undefined,"squad":10}],2:[function(require,module,exports){
+},{"_process":9,"buffer":4,"execon":6,"format-io":7,"fs":3,"nicki":undefined,"shortdate":10,"squad":11}],2:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
@@ -2481,6 +2484,68 @@ process.umask = function() { return 0; };
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/process/browser.js","/node_modules/process")
 },{"_process":9,"buffer":4}],10:[function(require,module,exports){
+(function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
+'use strict';
+
+module.exports = function(date, options) {
+    var sep;
+    var order;
+    var ret;
+    var day;
+    var month;
+    var year;
+    
+    date = date || new Date();
+    
+    check(date, options);
+    
+    if (!options) {
+        options = {};
+    }
+    
+    sep     = options.sep || '.';
+    order   = options.order || 'big'
+    
+    day     = date.getDate();
+    month   = date.getMonth() + 1;
+    year    = date.getFullYear();
+     
+    if (month <= 9)
+        month   = '0' + month;
+    
+    if (day <= 9)
+        day     = '0' + day;
+    
+    switch(order) {
+    case 'big':
+        ret         = [year, month, day].join(sep);
+        break;
+    case 'middle':
+        ret         = [month, day, year].join(sep);
+        break;
+    case 'little':
+        ret         = [day, month, year].join(sep);
+        break;
+    default:
+        throw Error('order could be "big", "middle" and "little" only!');
+    }
+    
+    return ret;
+};
+
+function check(date, options) {
+    var type = {}.toString.call(date);
+    
+    if (date && type !== '[object Date]')
+        throw Error('date should be Date!');
+    
+    if (options && typeof options !== 'object')
+        throw Error('options should be object!');
+ }
+
+
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/node_modules/shortdate/lib/shortdate.js","/node_modules/shortdate/lib")
+},{"_process":9,"buffer":4}],11:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,__filename,__dirname){
 (function(global) {
     'use strict';
