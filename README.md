@@ -58,7 +58,7 @@ Possible data:
     files:  [{
         name: 'readify.js',
         size: '4.22kb',
-        date: '2016.02.20',
+        date: Sat Feb 20 2016 12:31:29 GMT-0500 (EST),
         owner: 'coderaiser',
         mode: 'rw- rw- r--'
     }]
