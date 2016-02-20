@@ -1,3 +1,13 @@
+2016.02.20, v2.0.0
+
+feature:
+- (readify) emptyStat: add mtime
+- (readify) add date support
+- (package) add codestyle
+- (package) add coverage
+- (package) minify v2.0.0
+
+
 2015.10.25, v1.3.12
 
 feature:
