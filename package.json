@@ -38,7 +38,7 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "devDependencies": {
-    "browserify": "^11.2.0",
+    "browserify": "^13.0.0",
     "coveralls": "^2.11.6",
     "filer": "^0.0.44",
     "jscs": "^2.10.1",
