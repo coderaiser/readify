@@ -41,7 +41,7 @@
     "browserify": "^13.0.0",
     "coveralls": "^2.11.6",
     "filer": "^0.0.44",
-    "jscs": "^2.10.1",
+    "jscs": "^3.0.3",
     "jshint": "^2.9.1",
     "minify": "^2.0.3",
     "npm-run-all": "^1.5.1",
