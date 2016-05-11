@@ -17,7 +17,7 @@
     "minify": "minify dist/readify.js > dist/readify.min.js",
     "build:filer": "cat $npm_package_config_filer dist/readify.js > dist/readify.filer.js",
     "build:filer:min": "cat $npm_package_config_filer dist/readify.min.js > dist/readify.filer.min.js",
-    "build:all": "npm-run-all build build:filer build:filer:min",
+    "build:all": "redrun build build:filer build:filer:min",
     "wisdom": "npm run build:all",
     "codestyle": "jshint lib test && jscs --esnext lib test",
     "report": "nyc report --reporter=text-lcov | coveralls",
@@ -44,8 +44,8 @@
     "jscs": "^3.0.3",
     "jshint": "^2.9.1",
     "minify": "^2.0.3",
-    "npm-run-all": "^1.5.1",
     "nyc": "^6.1.1",
+    "redrun": "^3.0.0",
     "sinon": "^1.17.3",
     "tape": "^4.2.1"
   }
