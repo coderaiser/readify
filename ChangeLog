@@ -1,3 +1,16 @@
+2016.10.19, v3.0.0
+
+feature:
+- (readify) es2015-ify
+- (package) nyc v8.1.0
+- (package) redrun v5.0.0
+- (package) nyc v7.0.0
+- (package) redrun v4.0.0
+- (package) npm-run-all -> redrun
+- (package) jscs v3.0.3
+- (package) nyc v6.1.1
+
+
 2016.02.20, v2.0.2
 
 feature:
