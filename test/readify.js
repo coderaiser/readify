@@ -1,11 +1,11 @@
 'use strict';
 
-let readify = require('..'),
-    os      = require('os'),
-    fs      = require('fs'),
-    test    = require('tape'),
-    sinon   = require('sinon'),
-    exec    = require('execon');
+let readify = require('..');
+const os = require('os');
+const fs = require('fs');
+const test = require('tape');
+const sinon = require('sinon');
+const exec = require('execon');
 
 test('path: wrong', t => {
     readify('/wrong/path', (error) => {
@@ -30,7 +30,7 @@ test('result: should be sorted by name folders then files', function(t) {
     readify('.', (error, json) => {
         t.notOk(error, 'no error');
         
-        let all   = json.files,
+        const all   = json.files,
             
             isDir   = file => file.size === 'dir',
             
@@ -63,7 +63,7 @@ test('result: should be sorted by name folders then files', function(t) {
 
 test('result: files should have fields name, size, date, owner, mode', t => {
     readify('.', (error, json) => {
-        let files       = json.files,
+        const files       = json.files,
             length      = files.length,
             check       = () =>
                 files.filter((file) =>
@@ -80,7 +80,7 @@ test('result: files should have fields name, size, date, owner, mode', t => {
 
 test('result: file names should not be empty', t => {
     readify('.', (error, json) => {
-        let files       = json.files,
+        const files       = json.files,
             check       = () =>
                 files.filter((file) =>
                     !file.name
@@ -125,8 +125,8 @@ test('arguments: exception when no callback', t => {
 });
 
 test('readify stat: error', (t) => {
-    let stat = fs.stat;
-    let files = [{
+    const stat = fs.stat;
+    const files = [{
         name: 'readify.js',
         size: '0b',
         date: '',
@@ -149,7 +149,7 @@ test('readify stat: error', (t) => {
 });
 
 test('browser: filer', (t) => {
-    let filer = sinon.spy();
+    const filer = sinon.spy();
     
     before(filer);
     t.ok(filer.called, 'Filer should be called');
@@ -165,11 +165,11 @@ test('browser: nicki', (t) => {
         return fs;
     });
     
-    let nicki = sinon.spy();
+    const nicki = sinon.spy();
     
     require.cache[require.resolve('nicki')] = nicki;
     
-    let readify = require('..');
+    const readify = require('..');
     
     readify(__dirname, (error) => {
         t.notOk(error, 'should not be error');
