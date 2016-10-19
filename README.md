@@ -33,9 +33,9 @@ with help of [filer](https://github.com/filerjs/filer "Node-like file system for
 `node.js` example:
 
 ```js
-var readify = require('readify');
+const readify = require('readify');
 
-radify('/', function(error, data) {
+radify('/', (error, data) => {
     console.log(error || data);
 });
 ```
