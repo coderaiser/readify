@@ -9,22 +9,43 @@
     "url": "git://github.com/coderaiser/readify.git"
   },
   "config": {
-    "filer": "node_modules/filer/dist/filer.min.js"
+    "filer": "node_modules/filer/dist/filer.min.js",
+    "plugins": "-p [ minifyify --map readify.min.js.map --output dist/readify.min.js.map ]",
+    "compile": {
+      "client": "--igv process,global -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -o dist/readify.js",
+      "clientmin": "--igv process,global -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -d -o dist/readify.min.js"
+    }
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
   },
   "scripts": {
-    "bundle": "browserify lib/readify.js -s readify -u nicki --ig true > dist/readify.js",
-    "build": "npm run bundle && npm run minify",
-    "minify": "minify dist/readify.js > dist/readify.min.js",
+    "build:client": "browserify $npm_package_config_compile_client",
+    "build:client:min": "browserify $npm_package_config_compile_clientmin $npm_package_config_plugins",
+    "echo:client": "echo $npm_package_config_compile_client $npm_package_config_plugins",
     "build:filer": "cat $npm_package_config_filer dist/readify.js > dist/readify.filer.js",
     "build:filer:min": "cat $npm_package_config_filer dist/readify.min.js > dist/readify.filer.min.js",
-    "build:all": "redrun build build:filer build:filer:min",
-    "wisdom": "npm run build:all",
+    "build:node": "babel lib -d legacy/lib",
+    "build": "redrun build:* legacy:*",
+    "wisdom": "npm run build",
     "codestyle": "jshint lib test && jscs --esnext lib test",
     "report": "nyc report --reporter=text-lcov | coveralls",
     "coverage": "nyc npm test",
-    "test": "tape test/*.js"
+    "test": "tape test/*.js",
+    "watch:test": "npm run watcher -- npm test",
+    "watcher": "nodemon -w test -w lib --exec",
+    "legacy:index": "echo \"module.exports = require('./lib/readify');\" > legacy/index.js"
   },
   "dependencies": {
+    "currify": "^1.0.0",
+    "es6-promisify": "^5.0.0",
     "execon": "~1.2.0",
     "format-io": "~0.9.4",
     "nicki": "~1.2.2",
@@ -38,12 +59,16 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "devDependencies": {
+    "babel-cli": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babelify": "^7.3.0",
     "browserify": "^13.0.0",
     "coveralls": "^2.11.6",
     "filer": "^0.0.44",
     "jscs": "^3.0.3",
     "jshint": "^2.9.1",
-    "minify": "^2.0.3",
+    "minifyify": "^7.3.3",
+    "nodemon": "^1.11.0",
     "nyc": "^8.1.0",
     "redrun": "^5.0.1",
     "sinon": "^1.17.3",
