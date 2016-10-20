@@ -3,6 +3,7 @@
 let readify = require('..');
 const os = require('os');
 const fs = require('fs');
+const path = require('path');
 const test = require('tape');
 const sinon = require('sinon');
 const exec = require('execon');
@@ -126,19 +127,26 @@ test('arguments: exception when no callback', t => {
 
 test('readify stat: error', (t) => {
     const stat = fs.stat;
-    const files = [{
-        name: 'readify.js',
-        size: '0b',
-        date: '',
-        owner: '',
-        mode: ''
-    }];
+    const files = [
+        'readify.js',
+        'readify.min.js',
+        'readify.min.js.map'
+    ].map((name) => {
+        return {
+            name,
+            size: '0b',
+            date: '',
+            owner: '',
+            mode: ''
+        };
+    });
     
     fs.stat = (name, fn) => {
         fn(Error('EBUSY: resource busy or locked'));
     };
     
-    readify(__dirname, (error, data) => {
+    const dir = path.resolve(__dirname, '..', 'dist');
+    readify(dir, (error, data) => {
         t.notOk(error, 'no error when stat error');
         
         t.deepEqual(data.files, files, 'size, date, owner, mode should be empty');
