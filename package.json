@@ -13,7 +13,7 @@
     "plugins": "-p [ minifyify --map readify.min.js.map --output dist/readify.min.js.map ]",
     "compile": {
       "client": "--igv process,global -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -o dist/readify.js",
-      "clientmin": "--igv process,global -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -d -o dist/readify.min.js"
+      "client_min": "--igv process,global -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -d -o dist/readify.min.js"
     }
   },
   "babel": {
@@ -28,8 +28,7 @@
   },
   "scripts": {
     "build:client": "browserify $npm_package_config_compile_client",
-    "build:client:min": "browserify $npm_package_config_compile_clientmin $npm_package_config_plugins",
-    "echo:client": "echo $npm_package_config_compile_client $npm_package_config_plugins",
+    "build:client:min": "browserify $npm_package_config_compile_client_min $npm_package_config_plugins",
     "build:filer": "cat $npm_package_config_filer dist/readify.js > dist/readify.filer.js",
     "build:filer:min": "cat $npm_package_config_filer dist/readify.min.js > dist/readify.filer.min.js",
     "build:node": "babel lib -d legacy/lib",
