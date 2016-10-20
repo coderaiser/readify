@@ -149,27 +149,38 @@ test('readify stat: error', (t) => {
 });
 
 test('browser: filer', (t) => {
-    const filer = sinon.spy();
+    const Filer = {
+        FileSystem: sinon.stub()
+    };
     
-    before(filer);
-    t.ok(filer.called, 'Filer should be called');
+    require('filer');
+    require.cache[require.resolve('filer')].exports = Filer;
+    
+    before();
+    
+    t.ok(Filer.FileSystem.called, 'Filer should be called');
+    
     after();
+    
     t.end();
 });
 
 test('browser: nicki', (t) => {
-    before(function Filer() {
-        if (!(this instanceof Filer))
-            return new Filer();
-        
-        return fs;
-    });
+    const FileSystem = function() {
+        this.readdir = (name, callback) => callback(null, []);
+    };
+    
+    const Filer = {
+        FileSystem
+    };
     
     const nicki = sinon.spy();
     
-    require.cache[require.resolve('nicki')] = nicki;
+    require.cache[require.resolve('nicki')].exports = nicki;
+    require('filer');
+    require.cache[require.resolve('filer')].exports = Filer;
     
-    const readify = require('..');
+    before();
     
     readify(__dirname, (error) => {
         t.notOk(error, 'should not be error');
@@ -178,19 +189,12 @@ test('browser: nicki', (t) => {
     });
 });
 
-function before(filer) {
-    global.Filer = {
-        FileSystem: filer
-    };
-    
-    global.window = {
-        Filer: global.Filer
-    };
-    
+function before() {
+    global.window = {};
     delete require.cache[require.resolve('..')];
     readify = require('..');
 }
-    
+
 function after() {
     delete global.window;
     delete global.Filer;

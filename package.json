@@ -9,11 +9,10 @@
     "url": "git://github.com/coderaiser/readify.git"
   },
   "config": {
-    "filer": "node_modules/filer/dist/filer.min.js",
     "plugins": "-p [ minifyify --map readify.min.js.map --output dist/readify.min.js.map ]",
     "compile": {
-      "client": "--igv process,global -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -o dist/readify.js",
-      "client_min": "--igv process,global -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -d -o dist/readify.min.js"
+      "client": "--igv process,global,Buffer -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -o dist/readify.js",
+      "client_min": "--igv process,global,Buffer -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -d -o dist/readify.min.js"
     }
   },
   "babel": {
@@ -29,8 +28,6 @@
   "scripts": {
     "build:client": "browserify $npm_package_config_compile_client",
     "build:client:min": "browserify $npm_package_config_compile_client_min $npm_package_config_plugins",
-    "build:filer": "cat $npm_package_config_filer dist/readify.js > dist/readify.filer.js",
-    "build:filer:min": "cat $npm_package_config_filer dist/readify.min.js > dist/readify.filer.min.js",
     "build:node": "babel lib -d legacy/lib",
     "build": "redrun build:* legacy:*",
     "wisdom": "npm run build",
