@@ -1,3 +1,9 @@
+2016.10.20, v3.1.0
+
+feature:
+- (readify) Filer: global -> require
+
+
 2016.10.19, v3.0.0
 
 feature:
