@@ -28,7 +28,7 @@ npm i bower --save
 ## How to use?
 
 Readify could be used in node.js based applications or in browsers
-with help of [filer](https://github.com/filerjs/filer "Node-like file system for browsers"), [execon](https://github.com/coderaiser/execon "Patterns of function calls") and [format](https://github.com/coderaiser/format-io "Node library for format size, permissions").
+with help of [filer](https://github.com/filerjs/filer "Node-like file system for browsers").
 
 `node.js` example:
 
@@ -78,3 +78,4 @@ MIT
 
 [CoverageURL]:              https://coveralls.io/github/coderaiser/readify?branch=master
 [CoverageIMGURL]:           https://coveralls.io/repos/coderaiser/readify/badge.svg?branch=master&service=github
+
