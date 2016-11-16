@@ -42,11 +42,11 @@
   "dependencies": {
     "currify": "^1.0.0",
     "es6-promisify": "^5.0.0",
-    "execon": "~1.2.0",
-    "format-io": "~0.9.4",
-    "nicki": "~1.2.2",
-    "shortdate": "~1.2.0",
-    "squad": "~1.1.0",
+    "execon": "^1.2.0",
+    "format-io": "^0.9.4",
+    "nicki": "^1.2.2",
+    "shortdate": "^1.2.0",
+    "squad": "^1.1.0",
     "zames": "^1.0.0"
   },
   "keywords": [
