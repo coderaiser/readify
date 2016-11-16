@@ -1,3 +1,15 @@
+2016.11.16, v3.1.1
+
+feature:
+- (package) ~ -> ^
+- (package) add zames
+- (package) nyc v9.0.1
+- (npmignore) add bower.json
+- (travis) node_js: add 7
+- (travis) node.js v6
+- (readify) exec.with -> currify
+
+
 2016.10.20, v3.1.0
 
 feature:

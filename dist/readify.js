@@ -10589,7 +10589,40 @@ function sigmund (subject, maxSessions) {
     
 })(this);
 
-},{}],"readify.js":[function(require,module,exports){
+},{}],45:[function(require,module,exports){
+module.exports = require('./lib/zames');
+
+},{"./lib/zames":46}],46:[function(require,module,exports){
+'use strict';
+
+var promisify = require('es6-promisify');
+var currify = require('currify');
+
+module.exports = function (fn) {
+    check(fn);
+    checkCount(fn.length);
+    
+    var f = [
+        function (a) { return promisify(fn)(a); },
+        function (a, b) { return promisify(fn)(a, b); },
+        function (a, b, c) { return promisify(fn)(a, b, c); } ];
+    
+    var count = fn.length - 2;
+    return currify(f[count]);
+};
+
+function check(fn) {
+    if (typeof fn !== 'function')
+        { throw Error('fn should be a function!'); }
+}
+
+function checkCount(count) {
+    if (count > 4)
+        { throw Error('fn takes to much arguments, up to 4 supported'); }
+}
+
+
+},{"currify":5,"es6-promisify":8}],"readify.js":[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -10599,43 +10632,56 @@ var squad = require('squad');
 var shortdate = require('shortdate');
 var promisify = require('es6-promisify');
 var currify = require('currify');
+var zames = require('zames/legacy');
 
 var WIN = process.platform === 'win32';
+var BROWSER = typeof window !== 'undefined';
 
-var map = function map(fn, array) {
+var map = currify(function (fn, array) {
     return array.map(fn);
-};
-var sort = function sort(fn, array) {
+});
+var sort = currify(function (fn, array) {
     return array.sort(fn);
-};
-var parseStats = exec.with(map, parseStat);
+});
+var parseStats = map(parseStat);
 
-var getAllStats_ = currify(getAllStats);
+var getStat_ = currify(getStat);
 
-var fs = void 0;
-var nicki = void 0;
+var getAllStats = zames(_getAllStats);
 
-module.exports = readify;
+var getFS = function getFS() {
+    if (!BROWSER) return require('fs');
 
-if (typeof window !== 'undefined') {
     var Filer = require('filer');
-    fs = new Filer.FileSystem();
-} else {
-    fs = require('fs');
-    nicki = !WIN && require('nicki');
-}
+    return new Filer.FileSystem();
+};
+
+var fs = getFS();
+var nicki = !WIN && !BROWSER && require('nicki');
 
 var readdir = promisify(fs.readdir, fs);
 
 /* sorting on Win and node v0.8.0 */
-var sortFiles = exec.with(sort, function (a, b) {
+var sortFiles = sort(function (a, b) {
     return a.name > b.name ? 1 : -1;
 });
 
-function readify(path, callback) {
-    check(path, callback);
+var good = function good(f) {
+    return function () {
+        for (var _len = arguments.length, a = Array(_len), _key = 0; _key < _len; _key++) {
+            a[_key] = arguments[_key];
+        }
 
-    readdir(path).then(getAllStats_(path, callback)).catch(callback);
+        return f.apply(undefined, [null].concat(a));
+    };
+};
+
+module.exports = readify;
+
+function readify(path, fn) {
+    check(path, fn);
+
+    readdir(path).then(getAllStats(path)).then(good(fn)).catch(fn);
 }
 
 function check(path, callback) {
@@ -10651,19 +10697,19 @@ function check(path, callback) {
  * @param path
  * @param names
  */
-function getAllStats(path, callback, names) {
+function _getAllStats(path, names, callback) {
     var length = names.length;
     var dir = format.addSlashToEnd(path);
 
     if (!length) return fillJSON(dir, [], callback);
 
     var funcs = names.map(function (name) {
-        return exec.with(getStat, name, dir + name);
+        return getStat_(name, dir + name);
     });
 
     exec.parallel(funcs, function () {
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
+        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            args[_key2] = arguments[_key2];
         }
 
         var files = args.slice(1);
@@ -10766,5 +10812,5 @@ function changeOrder(json) {
 }
 
 }).call(this,require('_process'))
-},{"_process":41,"currify":5,"es6-promisify":8,"execon":9,"filer":23,"format-io":36,"fs":3,"nicki":undefined,"shortdate":42,"squad":44}]},{},["readify.js"])("readify.js")
+},{"_process":41,"currify":5,"es6-promisify":8,"execon":9,"filer":23,"format-io":36,"fs":3,"nicki":undefined,"shortdate":42,"squad":44,"zames/legacy":45}]},{},["readify.js"])("readify.js")
 });
