@@ -69,7 +69,7 @@ Possible data:
 In old `node.js` environments that supports `es5` only, `readify` could be used with:
 
 ```js
-var redrun = require('readify/legacy');
+var readify = require('readify/legacy');
 ```
 
 ## License
