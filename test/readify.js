@@ -15,7 +15,7 @@ test('path: wrong', t => {
     });
 });
 
-test('path: correct', t => {
+test('path: correct', (t) => {
     readify('.', (error, json) => {
         t.notOk(error, 'no error');
         
@@ -27,17 +27,15 @@ test('path: correct', t => {
     });
 });
 
-test('result: should be sorted by name folders then files', function(t) {
+test('result: should be sorted by name folders then files', (t) => {
     readify('.', (error, json) => {
         t.notOk(error, 'no error');
         
         const all   = json.files,
-            
             isDir   = file => file.size === 'dir',
-            
-            not     = function(fn) {
-                return function() {
-                    fn.apply(null, arguments);
+            not     = (fn) => {
+                return (...args) => {
+                    fn(...args);
                 };
             },
             
@@ -62,7 +60,7 @@ test('result: should be sorted by name folders then files', function(t) {
     });
 });
 
-test('result: files should have fields name, size, date, owner, mode', t => {
+test('result: files should have fields name, size, date, owner, mode', (t) => {
     readify('.', (error, json) => {
         const files       = json.files,
             length      = files.length,
