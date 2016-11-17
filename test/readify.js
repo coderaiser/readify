@@ -182,6 +182,7 @@ test('browser: nicki', (t) => {
     
     const nicki = sinon.spy();
     
+    require('nicki');
     require.cache[require.resolve('nicki')].exports = nicki;
     require('filer');
     require.cache[require.resolve('filer')].exports = Filer;
