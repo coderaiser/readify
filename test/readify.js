@@ -182,8 +182,8 @@ test('result: files should have fields name, size, date, owner, mode', (t) => {
         t.notOk(error, 'no error');
         
         t.equal(check(), length, 'files array do not have fields: name, size, date, owner, mode');
-    
-    t.end();
+        
+        t.end();
     });
 });
 
@@ -222,15 +222,15 @@ test('result: read empty directory', function(t) {
 });
 
 test('arguments: exception when no path', t => {
-   t.throws(readify, /path should be string!/, 'should throw when no path');
-   t.end();
+    t.throws(readify, /path should be string!/, 'should throw when no path');
+    t.end();
 });
 
 test('arguments: exception when no callback', t => {
-    var noCallback = exec.with(readify, '.');
+    const noCallback = exec.with(readify, '.');
     
-   t.throws(noCallback, /callback should be function!/, 'should throw when no callback');
-   t.end();
+    t.throws(noCallback, /callback should be function!/, 'should throw when no callback');
+    t.end();
 });
 
 test('readify stat: error', (t) => {
