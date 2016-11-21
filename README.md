@@ -36,7 +36,33 @@ with help of [filer](https://github.com/filerjs/filer "Node-like file system for
 const readify = require('readify');
 
 radify('/', (error, data) => {
-    console.log(error || data);
+    console.log(data);
+    // output
+    {
+        path: '/',
+        files:  [{
+            name: 'readify.js',
+            size: '4.22kb',
+            date: '20.02.2016',
+            owner: 'coderaiser',
+            mode: 'rw- rw- r--'
+        }]
+    }
+});
+
+radify('/', 'raw', (error, data) => {
+    console.log(data);
+    // output
+    {
+        path: '/',
+        files:  [{
+            name: 'readify.js',
+            size: 4735,
+            date: 2016-11-21T13:37:55.275Z,
+            owner: 1000,
+            mode: 33204
+        }]
+    }
 });
 ```
 
@@ -50,20 +76,6 @@ readify('/', function(error, data) {
 });
 ```
 
-Possible data:
-
-```js
-{
-    path: '/',
-    files:  [{
-        name: 'readify.js',
-        size: '4.22kb',
-        date: '20.02.2016',
-        owner: 'coderaiser',
-        mode: 'rw- rw- r--'
-    }]
-}
-```
 ## Environments
 
 In old `node.js` environments that supports `es5` only, `readify` could be used with:

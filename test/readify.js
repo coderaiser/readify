@@ -8,6 +8,8 @@ const test = require('tape');
 const sinon = require('sinon');
 const exec = require('execon');
 
+const noop = () => {};
+
 test('path: wrong', t => {
     readify('/wrong/path', (error) => {
         t.ok(error, error.message);
@@ -55,6 +57,114 @@ test('result: should be sorted by name folders then files', (t) => {
             );
         
         t.deepEqual(names, sorted);
+        
+        t.end();
+    });
+});
+
+test('readify: result', (t) => {
+    const update = () => {
+        delete require.cache[require.resolve('..')];
+        readify = require('..');
+    };
+    
+    const {readdir, stat} = fs;
+    
+    const name = 'hello.txt';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date();
+    const uid = 2;
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.stat = (name, fn) => {
+        fn(null, {
+            isDirectory: noop,
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    const expected = {
+        path: './',
+        files: [{
+            name,
+            size: '1.00kb',
+            date: '21.11.2016',
+            owner: 'bin',
+            mode: 'rwx rwx r-x'
+        }]
+    };
+    
+    update();
+    
+    readify('.', (error, result) => {
+        t.deepEqual(result, expected, 'should get raw values');
+        
+        fs.readdir = readdir;
+        fs.stat = stat;
+        
+        update();
+        
+        t.end();
+    });
+});
+
+test('readify: result: "raw"', (t) => {
+    const update = () => {
+        delete require.cache[require.resolve('..')];
+        readify = require('..');
+    };
+    
+    const {readdir, stat} = fs;
+    
+    const name = 'hello.txt';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date();
+    const uid = 1000;
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.stat = (name, fn) => {
+        fn(null, {
+            isDirectory: noop,
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    const expected = {
+        path: './',
+        files: [{
+            name,
+            size,
+            date: mtime,
+            owner: uid,
+            mode
+        }]
+    };
+    
+    update();
+    
+    readify('.', 'raw', (error, result) => {
+        t.deepEqual(expected, result, 'should get raw values');
+        
+        fs.readdir = readdir;
+        fs.stat = stat;
+        
+        update();
         
         t.end();
     });
