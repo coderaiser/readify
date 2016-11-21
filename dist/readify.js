@@ -25132,15 +25132,11 @@ var zames = require('zames/legacy');
 var WIN = process.platform === 'win32';
 var BROWSER = typeof window !== 'undefined';
 
-var map = currify(function (fn, array) {
-    return array.map(fn);
-});
 var sort = currify(function (fn, array) {
     return array.sort(fn);
 });
-var parseStats = map(parseStat);
-
-var getStat_ = currify(getStat);
+var getStat = currify(_getStat);
+var parseAllStats = currify(_parseAllStats);
 
 var getAllStats = zames(_getAllStats);
 
@@ -25173,10 +25169,15 @@ var good = function good(f) {
 
 module.exports = readify;
 
-function readify(path, fn) {
+function readify(path, type, fn) {
+    if (!fn) {
+        fn = type;
+        type = '';
+    }
+
     check(path, fn);
 
-    readdir(path).then(getAllStats(path)).then(good(fn)).catch(fn);
+    readdir(path).then(getAllStats(path, type)).then(good(fn)).catch(fn);
 }
 
 function check(path, callback) {
@@ -25192,14 +25193,14 @@ function check(path, callback) {
  * @param path
  * @param names
  */
-function _getAllStats(path, names, callback) {
+function _getAllStats(path, type, names, callback) {
     var length = names.length;
     var dir = format.addSlashToEnd(path);
 
-    if (!length) return fillJSON(dir, [], callback);
+    if (!length) return fillJSON(dir, [], type, callback);
 
     var funcs = names.map(function (name) {
-        return getStat_(name, dir + name);
+        return getStat(name, dir + name);
     });
 
     exec.parallel(funcs, function () {
@@ -25208,7 +25209,7 @@ function _getAllStats(path, names, callback) {
         }
 
         var files = args.slice(1);
-        fillJSON(dir, files, callback);
+        fillJSON(dir, files, type, callback);
     });
 }
 
@@ -25221,7 +25222,7 @@ function emptyStat() {
     };
 }
 
-function getStat(name, path, callback) {
+function _getStat(name, path, callback) {
     fs.stat(path, function (error) {
         var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : emptyStat();
 
@@ -25231,7 +25232,21 @@ function getStat(name, path, callback) {
     });
 }
 
-function parseStat(stat) {
+function _parseAllStats(type, array) {
+    return array.map(function (item) {
+        return parseStat(type, item);
+    });
+}
+
+function parseStat(type, stat) {
+    if (type === 'raw') return {
+        name: stat.name,
+        size: stat.size,
+        date: stat.mtime,
+        owner: stat.uid,
+        mode: stat.mode
+    };
+
     /* Переводим права доступа в 8-ричную систему */
     var modeStr = Number(stat.mode).toString(8);
     var owner = stat.uid || '';
@@ -25243,11 +25258,11 @@ function parseStat(stat) {
     });
 
     return {
-        'name': stat.name,
-        'size': format.size(size),
-        'date': mtime,
-        'owner': owner,
-        'mode': mode && format.permissions.symbolic(mode)
+        name: stat.name,
+        size: format.size(size),
+        date: mtime,
+        owner: owner,
+        mode: mode && format.permissions.symbolic(mode)
     };
 }
 
@@ -25256,14 +25271,16 @@ function parseStat(stat) {
  *
  * @param params - { files, stats, path }
  */
-function fillJSON(path, stats, callback) {
-    var processFiles = squad(changeOrder, sortFiles, parseStats);
+function fillJSON(path, stats, type, callback) {
+    var processFiles = squad(changeOrder, sortFiles, parseAllStats(type));
     var json = {
         path: '',
         files: processFiles(stats)
     };
 
     json.path = format.addSlashToEnd(path);
+
+    if (type === 'raw') return callback(null, json);
 
     changeUIDToName(json, function (error, files) {
         json.files = files;

@@ -1,3 +1,10 @@
+2016.11.21, v3.2.0
+
+feature:
+- (package) add eslint
+- (readify) add support of "raw" results
+
+
 2016.11.16, v3.1.2
 
 feature:
