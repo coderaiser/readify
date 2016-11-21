@@ -170,6 +170,60 @@ test('readify: result: "raw"', (t) => {
     });
 });
 
+test('readify: result: "raw": dir', (t) => {
+    const update = () => {
+        delete require.cache[require.resolve('..')];
+        readify = require('..');
+    };
+    
+    const {readdir, stat} = fs;
+    
+    const name = 'hello.txt';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date();
+    const uid = 1000;
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.stat = (name, fn) => {
+        fn(null, {
+            isDirectory: () => true,
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    const expected = {
+        path: './',
+        files: [{
+            name,
+            size: 'dir',
+            date: mtime,
+            owner: uid,
+            mode
+        }]
+    };
+    
+    update();
+    
+    readify('.', 'raw', (error, result) => {
+        t.deepEqual(expected, result, 'should get raw values');
+        
+        fs.readdir = readdir;
+        fs.stat = stat;
+        
+        update();
+        
+        t.end();
+    });
+});
+
 test('result: files should have fields name, size, date, owner, mode', (t) => {
     readify('.', (error, json) => {
         const files       = json.files,
