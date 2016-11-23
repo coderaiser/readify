@@ -42,7 +42,7 @@
     "legacy:index": "echo \"module.exports = require('./lib/readify');\" > legacy/index.js"
   },
   "dependencies": {
-    "currify": "^1.0.0",
+    "currify": "^2.0.0",
     "es6-promisify": "^5.0.0",
     "execon": "^1.2.0",
     "format-io": "^0.9.4",
