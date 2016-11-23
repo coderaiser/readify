@@ -73,7 +73,7 @@ test('readify: result', (t) => {
     const name = 'hello.txt';
     const mode = 16893;
     const size = 1024;
-    const mtime = new Date();
+    const mtime = new Date('2016-11-23T14:36:46.311Z');
     const uid = 2;
     
     fs.readdir = (dir, fn) => {
@@ -96,7 +96,7 @@ test('readify: result', (t) => {
         files: [{
             name,
             size: '1.00kb',
-            date: '21.11.2016',
+            date: '23.11.2016',
             owner: 'bin',
             mode: 'rwx rwx r-x'
         }]
