@@ -35,7 +35,7 @@ with help of [filer](https://github.com/filerjs/filer "Node-like file system for
 ```js
 const readify = require('readify');
 
-radify('/', (error, data) => {
+readify('/', (error, data) => {
     console.log(data);
     // output
     {
@@ -50,7 +50,7 @@ radify('/', (error, data) => {
     }
 });
 
-radify('/', 'raw', (error, data) => {
+readify('/', 'raw', (error, data) => {
     console.log(data);
     // output
     {
