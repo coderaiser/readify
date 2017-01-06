@@ -62,7 +62,7 @@ test('result: should be sorted by name folders then files', (t) => {
     });
 });
 
-test('readify: result', (t) => {
+test('readify: result: no owner', (t) => {
     const update = () => {
         delete require.cache[require.resolve('..')];
         readify = require('..');
@@ -97,7 +97,9 @@ test('readify: result', (t) => {
             name,
             size: '1.00kb',
             date: '23.11.2016',
-            owner: 'bin',
+            /* depends on npm@nicki     */
+            /* could be different   */
+            /* owner: 'bin',        */
             mode: 'rwx rwx r-x'
         }]
     };
@@ -105,7 +107,51 @@ test('readify: result', (t) => {
     update();
     
     readify('.', (error, result) => {
+        delete result.files[0].owner;
         t.deepEqual(result, expected, 'should get raw values');
+        
+        fs.readdir = readdir;
+        fs.stat = stat;
+        
+        update();
+        
+        t.end();
+    });
+});
+
+test('readify: result: owner', (t) => {
+    const update = () => {
+        delete require.cache[require.resolve('..')];
+        readify = require('..');
+    };
+    
+    const {readdir, stat} = fs;
+    
+    const name = 'hello.txt';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date('2016-11-23T14:36:46.311Z');
+    const uid = 2;
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.stat = (name, fn) => {
+        fn(null, {
+            isDirectory: noop,
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    update();
+    
+    readify('.', (error, result) => {
+        t.ok(result.files[0].owner, 'should contain owner');
         
         fs.readdir = readdir;
         fs.stat = stat;
