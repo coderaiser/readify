@@ -395,14 +395,14 @@ test('readify sort: size asc raw', (t) => {
 
 // no comment
 test('readify sort: owner', (t) => {
-    readify('./test/dir', {sort: 'owner'}, (error, data) => {
+    readify('./test/dir', {sort: 'owner'}, (error) => {
         t.notOk(error, 'no error');
         t.end();
     });
 });
 
 test('readify sort: date', (t) => {
-    readify('./test/dir', {sort: 'date'}, (error, data) => {
+    readify('./test/dir', {sort: 'date'}, (error) => {
         t.notOk(error, 'no error');
         t.end();
     });
