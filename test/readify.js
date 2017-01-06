@@ -376,6 +376,21 @@ test('readify sort: size asc', (t) => {
     });
 });
 
+// no comment
+test('readify sort: owner', (t) => {
+    readify('./test/dir', {sort: 'owner'}, (error, data) => {
+        t.notOk(error, 'no error');
+        t.end();
+    });
+});
+
+test('readify sort: date', (t) => {
+    readify('./test/dir', {sort: 'date'}, (error, data) => {
+        t.notOk(error, 'no error');
+        t.end();
+    });
+});
+
 test('browser: filer', (t) => {
     const Filer = {
         FileSystem: sinon.stub()
