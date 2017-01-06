@@ -376,6 +376,23 @@ test('readify sort: size asc', (t) => {
     });
 });
 
+test('readify sort: size asc raw', (t) => {
+    const files = [
+        '2.txt',
+        '3.txt',
+        '1.txt'
+        ];
+    
+    readify('./test/dir', {sort: 'size', type: 'raw'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file){
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
 // no comment
 test('readify sort: owner', (t) => {
     readify('./test/dir', {sort: 'owner'}, (error, data) => {
