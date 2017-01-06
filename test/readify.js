@@ -369,7 +369,7 @@ test('readify sort: size asc', (t) => {
         '1.txt'
     ];
     
-    readify('./test/dir', {sort: 'size'}, (error, data) => {
+    readify('./test/dir', {sort: 'size', order: 'asc'}, (error, data) => {
         t.notOk(error, 'no error');
         data.files = data.files.map(function(file) {
             return file.name;
