@@ -105,8 +105,8 @@ test('readify: result', (t) => {
     update();
     
     readify('.', (error, result) => {
-        result.files = result.files.map(function(file){
-            delete file._raw;
+        result.files = result.files.map(function(file) {
+            delete file.raw;
             return file;
         });
         t.deepEqual(result, expected, 'should get raw values');
@@ -234,7 +234,7 @@ test('result: files should have fields name, size, date, owner, mode', (t) => {
             length      = files.length,
             check       = () =>
                 files.filter((file) =>
-                    Object.keys(file).join(':') === 'name:size:date:owner:mode:_raw'
+                    Object.keys(file).join(':') === 'name:size:date:owner:mode:raw'
                 ).length;
         
         t.notOk(error, 'no error');
@@ -314,8 +314,8 @@ test('readify stat: error', (t) => {
     const dir = path.resolve(__dirname, '..', 'dist');
     readify(dir, (error, data) => {
         t.notOk(error, 'no error when stat error');
-        data.files = data.files.map(function(file){
-            delete file._raw;
+        data.files = data.files.map(function(file) {
+            delete file.raw;
             return file;
         });
         t.deepEqual(data.files, files, 'size, date, owner, mode should be empty');
@@ -334,7 +334,7 @@ test('readify sort: name asc', (t) => {
     
     readify('./test/dir', {sort: 'name'}, (error, data) => {
         t.notOk(error, 'no error');
-        data.files = data.files.map(function(file){
+        data.files = data.files.map(function(file) {
             return file.name;
         });
         t.deepEqual(data.files, files, 'correct order');
@@ -351,7 +351,7 @@ test('readify sort: name desc', (t) => {
     
     readify('./test/dir', {sort: 'name', order: 'desc'}, (error, data) => {
         t.notOk(error, 'no error');
-        data.files = data.files.map(function(file){
+        data.files = data.files.map(function(file) {
             return file.name;
         });
         t.deepEqual(data.files, files, 'correct order');
@@ -368,7 +368,7 @@ test('readify sort: size asc', (t) => {
     
     readify('./test/dir', {sort: 'size'}, (error, data) => {
         t.notOk(error, 'no error');
-        data.files = data.files.map(function(file){
+        data.files = data.files.map(function(file) {
             return file.name;
         });
         t.deepEqual(data.files, files, 'correct order');
@@ -385,7 +385,7 @@ test('readify sort: size asc raw', (t) => {
     
     readify('./test/dir', {sort: 'size', type: 'raw'}, (error, data) => {
         t.notOk(error, 'no error');
-        data.files = data.files.map(function(file){
+        data.files = data.files.map(function(file) {
             return file.name;
         });
         t.deepEqual(data.files, files, 'correct order');
