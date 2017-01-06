@@ -97,7 +97,9 @@ test('readify: result', (t) => {
             name,
             size: '1.00kb',
             date: '23.11.2016',
-            owner: 'bin',
+            /* depends on npm@nicki     */
+            /* could be different   */
+            /* owner: 'bin',        */
             mode: 'rwx rwx r-x'
         }]
     };
@@ -107,6 +109,7 @@ test('readify: result', (t) => {
     readify('.', (error, result) => {
         result.files = result.files.map(function(file) {
             delete file.raw;
+            delete file.owner;
             return file;
         });
         t.deepEqual(result, expected, 'should get raw values');
