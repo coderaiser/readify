@@ -35,7 +35,8 @@ with help of [filer](https://github.com/filerjs/filer "Node-like file system for
 ```js
 const readify = require('readify');
 
-radify('/', (error, data) => {
+// basic
+readify('/', (error, data) => {
     console.log(data);
     // output
     {
@@ -45,12 +46,13 @@ radify('/', (error, data) => {
             size: '4.22kb',
             date: '20.02.2016',
             owner: 'coderaiser',
-            mode: 'rw- rw- r--'
+            mode: 'rw- rw- r--',
         }]
     }
 });
 
-radify('/', 'raw', (error, data) => {
+// raw output
+readify('/', 'raw', (error, data) => {
     console.log(data);
     // output
     {
@@ -64,6 +66,19 @@ radify('/', 'raw', (error, data) => {
         }]
     }
 });
+
+// sort output
+// available sort option: name, size, owner, date
+// available order option: asc, desc
+readify('/', {sort: 'size', order: 'desc'}, (error, data) => {
+    console.log(data);
+});
+
+// all together
+readify('/', {sort: 'size', order: 'desc', type: 'raw'}, (error, data) => {
+    console.log(data);
+});
+
 ```
 
 `browser` example:

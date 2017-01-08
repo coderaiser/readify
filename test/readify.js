@@ -62,7 +62,7 @@ test('result: should be sorted by name folders then files', (t) => {
     });
 });
 
-test('readify: result: no owner', (t) => {
+test('readify: result', (t) => {
     const update = () => {
         delete require.cache[require.resolve('..')];
         readify = require('..');
@@ -107,51 +107,11 @@ test('readify: result: no owner', (t) => {
     update();
     
     readify('.', (error, result) => {
-        delete result.files[0].owner;
-        t.deepEqual(result, expected, 'should get raw values');
-        
-        fs.readdir = readdir;
-        fs.stat = stat;
-        
-        update();
-        
-        t.end();
-    });
-});
-
-test('readify: result: owner', (t) => {
-    const update = () => {
-        delete require.cache[require.resolve('..')];
-        readify = require('..');
-    };
-    
-    const {readdir, stat} = fs;
-    
-    const name = 'hello.txt';
-    const mode = 16893;
-    const size = 1024;
-    const mtime = new Date('2016-11-23T14:36:46.311Z');
-    const uid = 2;
-    
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
-    
-    fs.stat = (name, fn) => {
-        fn(null, {
-            isDirectory: noop,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
+        result.files = result.files.map(function(file) {
+            delete file.owner;
+            return file;
         });
-    };
-    
-    update();
-    
-    readify('.', (error, result) => {
-        t.ok(result.files[0].owner, 'should contain owner');
+        t.deepEqual(result, expected, 'should get raw values');
         
         fs.readdir = readdir;
         fs.stat = stat;
@@ -356,10 +316,96 @@ test('readify stat: error', (t) => {
     const dir = path.resolve(__dirname, '..', 'dist');
     readify(dir, (error, data) => {
         t.notOk(error, 'no error when stat error');
-        
+        data.files = data.files.map(function(file) {
+            delete file.raw;
+            return file;
+        });
         t.deepEqual(data.files, files, 'size, date, owner, mode should be empty');
         
         fs.stat = stat;
+        t.end();
+    });
+});
+
+test('readify sort: name asc', (t) => {
+    const files = [
+        '1.txt',
+        '2.txt',
+        '3.txt'
+    ];
+    
+    readify('./test/dir', {sort: 'name'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: name desc', (t) => {
+    const files = [
+        '3.txt',
+        '2.txt',
+        '1.txt'
+    ];
+    
+    readify('./test/dir', {sort: 'name', order: 'desc'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: size asc', (t) => {
+    const files = [
+        '2.txt',
+        '3.txt',
+        '1.txt'
+    ];
+    
+    readify('./test/dir', {sort: 'size', order: 'asc'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: size asc raw', (t) => {
+    const files = [
+        '2.txt',
+        '3.txt',
+        '1.txt'
+        ];
+    
+    readify('./test/dir', {sort: 'size', type: 'raw'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+// no comment
+test('readify sort: owner', (t) => {
+    readify('./test/dir', {sort: 'owner'}, (error) => {
+        t.notOk(error, 'no error');
+        t.end();
+    });
+});
+
+test('readify sort: date', (t) => {
+    readify('./test/dir', {sort: 'date'}, (error) => {
+        t.notOk(error, 'no error');
         t.end();
     });
 });
