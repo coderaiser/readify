@@ -47,7 +47,6 @@ readify('/', (error, data) => {
             date: '20.02.2016',
             owner: 'coderaiser',
             mode: 'rw- rw- r--',
-            _raw: [object] // see bellow
         }]
     }
 });

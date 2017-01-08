@@ -108,7 +108,6 @@ test('readify: result', (t) => {
     
     readify('.', (error, result) => {
         result.files = result.files.map(function(file) {
-            delete file.raw;
             delete file.owner;
             return file;
         });
@@ -237,7 +236,7 @@ test('result: files should have fields name, size, date, owner, mode', (t) => {
             length      = files.length,
             check       = () =>
                 files.filter((file) =>
-                    Object.keys(file).join(':') === 'name:size:date:owner:mode:raw'
+                    Object.keys(file).join(':') === 'name:size:date:owner:mode'
                 ).length;
         
         t.notOk(error, 'no error');
