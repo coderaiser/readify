@@ -62,7 +62,29 @@ test('result: should be sorted by name folders then files', (t) => {
     });
 });
 
-test('readify: result', (t) => {
+test('readify sort: accent', (t) => {
+    const files = [
+        'a.txt',
+        'd.txt',
+        'e.txt',
+        'é.txt',
+        'è.txt',
+        'f.txt',
+        'z.txt'
+    ];
+    
+    const dir = path.join(__dirname, 'fixture', 'accents');
+    readify(dir, (error, data) => {
+        const names = data.files.map((file) => {
+            return file.name;
+        });
+        
+        t.deepEqual(names, files, 'should use correct order for accents');
+        t.end();
+    });
+});
+
+test('readify: result: no owner', (t) => {
     const update = () => {
         delete require.cache[require.resolve('..')];
         readify = require('..');
@@ -112,6 +134,49 @@ test('readify: result', (t) => {
             return file;
         });
         t.deepEqual(result, expected, 'should get raw values');
+        
+        fs.readdir = readdir;
+        fs.stat = stat;
+        
+        update();
+        
+        t.end();
+    });
+});
+
+test('readify: result: owner', (t) => {
+    const update = () => {
+        delete require.cache[require.resolve('..')];
+        readify = require('..');
+    };
+    
+    const {readdir, stat} = fs;
+    
+    const name = 'hello.txt';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date('2016-11-23T14:36:46.311Z');
+    const uid = 2;
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.stat = (name, fn) => {
+        fn(null, {
+            isDirectory: noop,
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    update();
+    
+    readify('.', (error, result) => {
+        t.ok(result.files[0].owner, 'should contain owner');
         
         fs.readdir = readdir;
         fs.stat = stat;
@@ -316,10 +381,7 @@ test('readify stat: error', (t) => {
     const dir = path.resolve(__dirname, '..', 'dist');
     readify(dir, (error, data) => {
         t.notOk(error, 'no error when stat error');
-        data.files = data.files.map(function(file) {
-            delete file.raw;
-            return file;
-        });
+        
         t.deepEqual(data.files, files, 'size, date, owner, mode should be empty');
         
         fs.stat = stat;
