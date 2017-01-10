@@ -292,6 +292,113 @@ test('readify: result: "raw": dir', (t) => {
     });
 });
 
+test('readify: result: uid: 0', (t) => {
+    const update = () => {
+        delete require.cache[require.resolve('..')];
+        readify = require('..');
+    };
+    
+    const {readdir, stat} = fs;
+    
+    const name = 'hello.txt';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date();
+    const uid = 0;
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.stat = (name, fn) => {
+        fn(null, {
+            isDirectory: () => true,
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    const expected = {
+        path: './',
+        files: [{
+            name,
+            size: 'dir',
+            date: '10.01.2017',
+            owner: 'root',
+            mode: 'rwx rwx r-x'
+        }]
+    };
+    
+    update();
+    
+    readify('.', (error, result) => {
+        t.deepEqual(result, expected, 'should get raw values');
+        
+        fs.readdir = readdir;
+        fs.stat = stat;
+        
+        update();
+        
+        t.end();
+    });
+});
+
+test('readify: result: nicki: no name found', (t) => {
+    const update = () => {
+        delete require.cache[require.resolve('..')];
+        readify = require('..');
+    };
+    
+    const {readdir, stat} = fs;
+    
+    const name = 'hello.txt';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date();
+    const uid = Math.random();
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.stat = (name, fn) => {
+        fn(null, {
+            isDirectory: () => true,
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    const expected = {
+        path: './',
+        files: [{
+            name,
+            size: 'dir',
+            date: '10.01.2017',
+            owner: uid,
+            mode: 'rwx rwx r-x'
+        }]
+    };
+    
+    update();
+    
+    readify('.', (error, result) => {
+        t.deepEqual(result, expected, 'should get raw values');
+        
+        fs.readdir = readdir;
+        fs.stat = stat;
+        
+        update();
+        
+        t.end();
+    });
+});
 test('result: files should have fields name, size, date, owner, mode', (t) => {
     readify('.', (error, json) => {
         const files       = json.files,
@@ -366,7 +473,7 @@ test('readify stat: error', (t) => {
             name,
             size: '0b',
             date: '',
-            owner: '',
+            owner: 0,
             mode: ''
         };
     });
