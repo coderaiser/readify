@@ -62,6 +62,27 @@ test('result: should be sorted by name folders then files', (t) => {
     });
 });
 
+test('readify sort: accent', (t) => {
+    const files = [
+        'a.txt',
+        'd.txt',
+        'e.txt',
+        'é.txt',
+        'è.txt',
+        'f.txt',
+        'z.txt'
+    ];
+    
+    readify('./test/accents', (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
 test('readify: result: no owner', (t) => {
     const update = () => {
         delete require.cache[require.resolve('..')];
