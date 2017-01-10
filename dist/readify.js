@@ -23281,7 +23281,7 @@ module.exports = require('./lib/zames');
 'use strict';
 
 var promisify = require('es6-promisify');
-var currify = require('currify');
+var currify = require('currify/legacy');
 
 module.exports = function (fn, ctx) {
     check(fn);
@@ -23307,33 +23307,11 @@ function checkCount(count) {
 }
 
 
-},{"currify":129,"es6-promisify":18}],129:[function(require,module,exports){
-'use strict';
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
-module.exports = currify;
-
-var tail = function tail(list) {
-    return [].slice.call(list, 1);
-};
-
-function currify(fn) {
-    check(fn);
-
-    var args = tail(arguments);
-
-    if (args.length >= fn.length) return fn.apply(undefined, _toConsumableArray(args));else return function () {
-        return currify.apply(undefined, [fn].concat(_toConsumableArray(args), Array.prototype.slice.call(arguments)));
-    };
-}
-
-function check(fn) {
-    if (typeof fn !== 'function') throw Error('fn should be function!');
-}
-},{}],"readify.js":[function(require,module,exports){
+},{"currify/legacy":12,"es6-promisify":18}],"readify.js":[function(require,module,exports){
 (function (process){
 'use strict';
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var format = require('format-io');
 var exec = require('execon');
@@ -23366,9 +23344,9 @@ var nicki = !WIN && !BROWSER && require('nicki/legacy');
 
 var readdir = promisify(fs.readdir, fs);
 
-/* sorting on Win and node v0.8.0 */
+// http://www.jstips.co/en/sorting-strings-with-accented-characters/
 var sortFiles = sort(function (a, b) {
-    return a.name > b.name ? 1 : -1;
+    return a.name.localeCompare(b.name);
 });
 
 var good = function good(f) {
@@ -23432,6 +23410,7 @@ function emptyStat() {
         mode: 0,
         size: 0,
         mtime: 0,
+        uid: 0,
         isDirectory: function isDirectory() {}
     };
 }
@@ -23466,7 +23445,7 @@ function parseStat(type, stat) {
 
     /* Переводим права доступа в 8-ричную систему */
     var modeStr = Number(stat.mode).toString(8);
-    var owner = stat.uid || '';
+    var owner = stat.uid;
     var mode = Number(modeStr) || '';
     var mtime = !stat.mtime ? '' : shortdate(stat.mtime, {
         order: 'little'
@@ -23498,24 +23477,18 @@ function fillJSON(path, stats, type, callback) {
     if (type === 'raw') return callback(null, json);
 
     changeUIDToName(json, function (error, files) {
-        json.files = files;
+        json.files = files || json.files;
         callback(null, json);
     });
 }
 
 function changeUIDToName(json, callback) {
     if (!nicki) callback(null, json.files);else nicki(function (error, names) {
-        var files = void 0;
+        if (error) return callback(error);
 
-        if (error) files = json.files.slice();else files = json.files.map(function (file) {
-            var owner = file.owner;
+        var files = replaceFromList(names, 'owner', json.files);
 
-            if (names[owner]) file.owner = names[owner];
-
-            return file;
-        });
-
-        callback(error, files);
+        callback(null, files);
     });
 }
 
@@ -23536,6 +23509,17 @@ function changeOrder(json) {
     var sorted = dirs.concat(files);
 
     return sorted;
+}
+
+function replaceFromList(obj, prop, array) {
+    return array.map(function (a) {
+        var n = a[prop];
+        var data = obj[n];
+
+        if (!data) return a;
+
+        return Object.assign(a, _defineProperty({}, prop, data));
+    });
 }
 
 }).call(this,require('_process'))
