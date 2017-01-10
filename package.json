@@ -8,28 +8,14 @@
     "type": "git",
     "url": "git://github.com/coderaiser/readify.git"
   },
-  "config": {
-    "plugins": "-p [ minifyify --map readify.min.js.map --output dist/readify.min.js.map ]",
-    "compile": {
-      "client": "--igv process,global,Buffer -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -o dist/readify.js",
-      "client_min": "--igv process,global,Buffer -u nicki -s readify -r ./lib/readify.js:readify.js ./lib/readify.js -d -o dist/readify.min.js"
-    }
-  },
   "babel": {
     "presets": [
       "es2015"
     ]
   },
-  "browserify": {
-    "transform": [
-      "babelify"
-    ]
-  },
   "scripts": {
-    "build:client": "browserify $npm_package_config_compile_client",
-    "build:client:min": "browserify $npm_package_config_compile_client_min $npm_package_config_plugins",
-    "build:node": "babel lib -d legacy/lib",
-    "build": "redrun build:* legacy:*",
+    "compile": "babel lib -d legacy/lib",
+    "build": "redrun compile legacy:*",
     "wisdom": "npm run build",
     "lint": "redrun codestyle lint:*",
     "lint:eslint": "eslint lib test",
@@ -39,6 +25,7 @@
     "test": "tape test/*.js",
     "watch:coverage": "npm run watcher -- npm run coverage",
     "watch:test": "npm run watcher -- npm test",
+    "watch:coverage": "npm run watcher -- npm run coverage",
     "watcher": "nodemon -w test -w lib --exec",
     "legacy:index": "echo \"module.exports = require('./lib/readify');\" > legacy/index.js"
   },
@@ -64,7 +51,6 @@
     "browserify": "^13.0.0",
     "coveralls": "^2.11.6",
     "eslint": "^3.10.2",
-    "filer": "^0.0.44",
     "jscs": "^3.0.3",
     "jshint": "^2.9.1",
     "minifyify": "^7.3.3",

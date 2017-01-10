@@ -27,11 +27,6 @@ npm i bower --save
 
 ## How to use?
 
-Readify could be used in node.js based applications or in browsers
-with help of [filer](https://github.com/filerjs/filer "Node-like file system for browsers").
-
-`node.js` example:
-
 ```js
 const readify = require('readify');
 
@@ -63,16 +58,6 @@ radify('/', {type: 'raw'}, (error, data) => {
             mode: 33204
         }]
     }
-});
-```
-
-`browser` example:
-
-```js
-var fs = new Filer.FileSystem();
-
-readify('/', function(error, data) {
-    console.log(error || data);
 });
 ```
 

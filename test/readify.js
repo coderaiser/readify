@@ -473,61 +473,32 @@ test('readify stat: error', (t) => {
     });
 });
 
-test('browser: filer', (t) => {
-    const Filer = {
-        FileSystem: sinon.stub()
-    };
-    
-    require('filer');
-    require.cache[require.resolve('filer')].exports = Filer;
-    
-    beforeFiler();
-    
-    t.ok(Filer.FileSystem.called, 'Filer should be called');
-    
-    after();
-    
-    t.end();
-});
-
-test('browser: nicki', (t) => {
-    const FileSystem = function() {
-        this.readdir = (name, callback) => callback(null, []);
-    };
-    
-    const Filer = {
-        FileSystem
-    };
+test('readify: nicki on win', (t) => {
+    Object.defineProperty(process, 'platform', {
+        value: 'win32'
+    });
     
     const nicki = sinon.spy();
     
     require('nicki');
     require.cache[require.resolve('nicki')].exports = nicki;
-    require('filer');
-    require.cache[require.resolve('filer')].exports = Filer;
     
-    beforeFiler();
+    before();
     
     readify(__dirname, (error) => {
-        t.notOk(error, 'should not be error');
         t.notOk(nicki.called, 'nicki should not be called');
+        
+        Object.defineProperty(process, 'platform', {
+            value: 'linux'
+        });
+        
         t.end();
     });
 });
-
-function beforeFiler() {
-    global.window = {};
-    before();
-}
 
 function before() {
     delete require.cache[require.resolve('..')];
     delete require.cache[require.resolve('../lib/readdir')];
     readify = require('..');
-}
-
-function after() {
-    delete global.window;
-    delete global.Filer;
 }
 
