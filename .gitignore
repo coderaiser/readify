@@ -3,6 +3,6 @@ legacy
 npm-debug.log
 .nyc_output
 coverage
-
 *.swp
-
+/.*.md.html
+/.project
