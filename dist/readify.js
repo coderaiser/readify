@@ -23329,6 +23329,7 @@ var sort = currify(function (fn, array) {
 });
 var getStat = currify(_getStat);
 var parseAllStats = currify(_parseAllStats);
+var replaceProperty = currify(_replaceProperty);
 
 var getAllStats = zames(_getAllStats);
 
@@ -23344,9 +23345,9 @@ var nicki = !WIN && !BROWSER && require('nicki/legacy');
 
 var readdir = promisify(fs.readdir, fs);
 
-// http://www.jstips.co/en/sorting-strings-with-accented-characters/
+/* sorting on Win and node v0.8.0 */
 var sortFiles = sort(function (a, b) {
-    return a.name.localeCompare(b.name);
+    return a.name > b.name ? 1 : -1;
 });
 
 var good = function good(f) {
@@ -23425,38 +23426,55 @@ function _getStat(name, path, callback) {
     });
 }
 
-function _parseAllStats(type, array) {
-    return array.map(function (item) {
-        return parseStat(type, item);
+function replaceDate(stat) {
+    var date = !stat.date ? '' : shortdate(stat.date, {
+        order: 'little'
     });
+
+    return Object.assign(stat, {
+        date: date
+    });
+};
+
+function replaceMode(stat) {
+    var octal = Number(stat.mode).toString(8);
+    var mode = format.permissions.symbolic(octal);
+
+    return Object.assign(stat, {
+        mode: mode
+    });
+}
+
+function replaceSize(stat) {
+    var size = format.size(stat.size);
+
+    return Object.assign(stat, {
+        size: size
+    });
+}
+
+function _parseAllStats(type, array) {
+    var parse = function parse(item) {
+        return parseStat(type, item);
+    };
+
+    var files = array.map(parse);
+
+    if (type === 'raw') return files;
+
+    return files.map(replaceDate).map(replaceSize).map(replaceMode);
 }
 
 function parseStat(type, stat) {
     var isDir = stat.isDirectory();
     var size = isDir ? 'dir' : stat.size;
 
-    if (type === 'raw') return {
+    return {
         name: stat.name,
         size: size,
         date: stat.mtime,
         owner: stat.uid,
         mode: stat.mode
-    };
-
-    /* Переводим права доступа в 8-ричную систему */
-    var modeStr = Number(stat.mode).toString(8);
-    var owner = stat.uid;
-    var mode = Number(modeStr) || '';
-    var mtime = !stat.mtime ? '' : shortdate(stat.mtime, {
-        order: 'little'
-    });
-
-    return {
-        name: stat.name,
-        size: format.size(size),
-        date: mtime,
-        owner: owner,
-        mode: mode && format.permissions.symbolic(mode)
     };
 }
 
@@ -23483,10 +23501,13 @@ function fillJSON(path, stats, type, callback) {
 }
 
 function changeUIDToName(json, callback) {
-    if (!nicki) callback(null, json.files);else nicki(function (error, names) {
+    if (!nicki) return callback(null, json.files);
+
+    nicki(function (error, names) {
         if (error) return callback(error);
 
-        var files = replaceFromList(names, 'owner', json.files);
+        var replaceOwner = replaceProperty(names, 'owner');
+        var files = json.files.map(replaceOwner);
 
         callback(null, files);
     });
@@ -23511,15 +23532,13 @@ function changeOrder(json) {
     return sorted;
 }
 
-function replaceFromList(obj, prop, array) {
-    return array.map(function (a) {
-        var n = a[prop];
-        var data = obj[n];
+function _replaceProperty(obj, prop, item) {
+    var n = item[prop];
+    var data = obj[n];
 
-        if (!data) return a;
+    if (typeof data === 'undefined') return item;
 
-        return Object.assign(a, _defineProperty({}, prop, data));
-    });
+    return Object.assign(item, _defineProperty({}, prop, data));
 }
 
 }).call(this,require('_process'))
