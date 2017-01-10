@@ -37,6 +37,7 @@
     "report": "nyc report --reporter=text-lcov | coveralls",
     "coverage": "nyc npm test",
     "test": "tape test/*.js",
+    "watch:coverage": "npm run watcher -- npm run coverage",
     "watch:test": "npm run watcher -- npm test",
     "watcher": "nodemon -w test -w lib --exec",
     "legacy:index": "echo \"module.exports = require('./lib/readify');\" > legacy/index.js"

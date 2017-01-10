@@ -474,7 +474,7 @@ test('readify stat: error', (t) => {
             size: '0b',
             date: '',
             owner: 0,
-            mode: ''
+            mode: '--- --- ---'
         };
     });
     
