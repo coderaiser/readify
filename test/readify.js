@@ -1,12 +1,14 @@
 'use strict';
 
 let readify = require('..');
+
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const test = require('tape');
 const sinon = require('sinon');
 const exec = require('execon');
+const shortdate = require('shortdate');
 
 const noop = () => {};
 
@@ -65,6 +67,7 @@ test('result: should be sorted by name folders then files', (t) => {
 test('readify: result: no owner', (t) => {
     const update = () => {
         delete require.cache[require.resolve('..')];
+        delete require.cache[require.resolve('../lib/readdir')];
         readify = require('..');
     };
     
@@ -165,6 +168,7 @@ test('readify: result: owner', (t) => {
 test('readify: result: "raw"', (t) => {
     const update = () => {
         delete require.cache[require.resolve('..')];
+        delete require.cache[require.resolve('../lib/readdir')];
         readify = require('..');
     };
     
@@ -217,11 +221,6 @@ test('readify: result: "raw"', (t) => {
 });
 
 test('readify: result: "raw": dir', (t) => {
-    const update = () => {
-        delete require.cache[require.resolve('..')];
-        readify = require('..');
-    };
-    
     const {readdir, stat} = fs;
     
     const name = 'hello.txt';
@@ -256,7 +255,7 @@ test('readify: result: "raw": dir', (t) => {
         }]
     };
     
-    update();
+    before();
     
     readify('.', 'raw', (error, result) => {
         t.deepEqual(expected, result, 'should get raw values');
@@ -264,18 +263,11 @@ test('readify: result: "raw": dir', (t) => {
         fs.readdir = readdir;
         fs.stat = stat;
         
-        update();
-        
         t.end();
     });
 });
 
 test('readify: result: uid: 0', (t) => {
-    const update = () => {
-        delete require.cache[require.resolve('..')];
-        readify = require('..');
-    };
-    
     const {readdir, stat} = fs;
     
     const name = 'hello.txt';
@@ -299,18 +291,22 @@ test('readify: result: uid: 0', (t) => {
         });
     };
     
+    const date = shortdate(mtime, {
+        order: 'little'
+    });
+    
     const expected = {
         path: './',
         files: [{
             name,
             size: 'dir',
-            date: '10.01.2017',
+            date,
             owner: 'root',
             mode: 'rwx rwx r-x'
         }]
     };
     
-    update();
+    before();
     
     readify('.', (error, result) => {
         t.deepEqual(result, expected, 'should get raw values');
@@ -318,18 +314,11 @@ test('readify: result: uid: 0', (t) => {
         fs.readdir = readdir;
         fs.stat = stat;
         
-        update();
-        
         t.end();
     });
 });
 
 test('readify: result: nicki: no name found', (t) => {
-    const update = () => {
-        delete require.cache[require.resolve('..')];
-        readify = require('..');
-    };
-    
     const {readdir, stat} = fs;
     
     const name = 'hello.txt';
@@ -353,18 +342,22 @@ test('readify: result: nicki: no name found', (t) => {
         });
     };
     
+    const date = shortdate(mtime, {
+        order: 'little'
+    });
+    
     const expected = {
         path: './',
         files: [{
             name,
             size: 'dir',
-            date: '10.01.2017',
+            date,
             owner: uid,
             mode: 'rwx rwx r-x'
         }]
     };
     
-    update();
+    before();
     
     readify('.', (error, result) => {
         t.deepEqual(result, expected, 'should get raw values');
@@ -372,11 +365,10 @@ test('readify: result: nicki: no name found', (t) => {
         fs.readdir = readdir;
         fs.stat = stat;
         
-        update();
-        
         t.end();
     });
 });
+
 test('result: files should have fields name, size, date, owner, mode', (t) => {
     readify('.', (error, json) => {
         const files       = json.files,
@@ -460,6 +452,8 @@ test('readify stat: error', (t) => {
         fn(Error('EBUSY: resource busy or locked'));
     };
     
+    before();
+    
     const dir = path.resolve(__dirname, '..', 'dist');
     readify(dir, (error, data) => {
         t.notOk(error, 'no error when stat error');
@@ -479,7 +473,7 @@ test('browser: filer', (t) => {
     require('filer');
     require.cache[require.resolve('filer')].exports = Filer;
     
-    before();
+    beforeFiler();
     
     t.ok(Filer.FileSystem.called, 'Filer should be called');
     
@@ -504,7 +498,7 @@ test('browser: nicki', (t) => {
     require('filer');
     require.cache[require.resolve('filer')].exports = Filer;
     
-    before();
+    beforeFiler();
     
     readify(__dirname, (error) => {
         t.notOk(error, 'should not be error');
@@ -513,9 +507,14 @@ test('browser: nicki', (t) => {
     });
 });
 
-function before() {
+function beforeFiler() {
     global.window = {};
+    before();
+}
+
+function before() {
     delete require.cache[require.resolve('..')];
+    delete require.cache[require.resolve('../lib/readdir')];
     readify = require('..');
 }
 
