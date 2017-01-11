@@ -1,6 +1,6 @@
 {
   "name": "readify",
-  "version": "3.3.1",
+  "version": "4.0.0",
   "author": "coderaiser <mnemonic.enemy@gmail.com> (https://github.com/coderaiser)",
   "description": "Read directory content with file attributes: size, date, owner, mode",
   "homepage": "http://github.com/coderaiser/readify",
@@ -25,7 +25,6 @@
     "test": "tape test/*.js",
     "watch:coverage": "npm run watcher -- npm run coverage",
     "watch:test": "npm run watcher -- npm test",
-    "watch:coverage": "npm run watcher -- npm run coverage",
     "watcher": "nodemon -w test -w lib --exec",
     "legacy:index": "echo \"module.exports = require('./lib/readify');\" > legacy/index.js"
   },
