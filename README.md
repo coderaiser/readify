@@ -19,12 +19,6 @@ With npm:
 npm i readify --save
 ```
 
-With bower:
-
-```
-npm i bower --save
-```
-
 ## How to use?
 
 ```js
