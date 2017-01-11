@@ -485,7 +485,7 @@ test('readify: nicki on win', (t) => {
     
     before();
     
-    readify(__dirname, (error) => {
+    readify(__dirname, () => {
         t.notOk(nicki.called, 'nicki should not be called');
         
         Object.defineProperty(process, 'platform', {
