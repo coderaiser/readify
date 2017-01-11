@@ -4,7 +4,6 @@ let readify = require('..');
 
 const os = require('os');
 const fs = require('fs');
-const path = require('path');
 const test = require('tape');
 const sinon = require('sinon');
 const exec = require('execon');
@@ -469,7 +468,7 @@ test('readify: nicki: error ', (t) => {
     const nicki = function(callback) {
         fn(e);
         callback(e);
-    }
+    };
     
     require('nicki/legacy');
     require.cache[require.resolve('nicki/legacy')].exports = nicki;
