@@ -440,39 +440,6 @@ test('arguments: exception when no callback', t => {
     t.end();
 });
 
-test('readify stat: error', (t) => {
-    const stat = fs.stat;
-    const files = [
-        'readify.js',
-        'readify.min.js',
-        'readify.min.js.map'
-    ].map((name) => {
-        return {
-            name,
-            size: '0b',
-            date: '',
-            owner: 0,
-            mode: '--- --- ---'
-        };
-    });
-    
-    fs.stat = (name, fn) => {
-        fn(Error('EBUSY: resource busy or locked'));
-    };
-    
-    before();
-    
-    const dir = path.resolve(__dirname, '..', 'dist');
-    readify(dir, (error, data) => {
-        t.notOk(error, 'no error when stat error');
-        
-        t.deepEqual(data.files, files, 'size, date, owner, mode should be empty');
-        
-        fs.stat = stat;
-        t.end();
-    });
-});
-
 test('readify: nicki on win', (t) => {
     Object.defineProperty(process, 'platform', {
         value: 'win32'
@@ -480,8 +447,8 @@ test('readify: nicki on win', (t) => {
     
     const nicki = sinon.spy();
     
-    require('nicki');
-    require.cache[require.resolve('nicki')].exports = nicki;
+    require('nicki/legacy');
+    require.cache[require.resolve('nicki/legacy')].exports = nicki;
     
     before();
     
@@ -492,6 +459,25 @@ test('readify: nicki on win', (t) => {
             value: 'linux'
         });
         
+        t.end();
+    });
+});
+
+test('readify: nicki: error ', (t) => {
+    const fn = sinon.stub();
+    const e = Error('nicki error');
+    const nicki = function(callback) {
+        fn(e);
+        callback(e);
+    }
+    
+    require('nicki/legacy');
+    require.cache[require.resolve('nicki/legacy')].exports = nicki;
+    
+    before();
+    
+    readify(__dirname, () => {
+        t.ok(fn.calledWith(e), 'should call callback when nicki has error');
         t.end();
     });
 });
