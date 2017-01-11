@@ -50,7 +50,7 @@ radify('/', (error, data) => {
     }
 });
 
-radify('/', 'raw', (error, data) => {
+radify('/', {type: 'raw'}, (error, data) => {
     console.log(data);
     // output
     {

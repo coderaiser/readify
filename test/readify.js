@@ -111,7 +111,7 @@ test('readify: result: no owner', (t) => {
     
     readify('.', (error, result) => {
         delete result.files[0].owner;
-        t.deepEqual(result, expected, 'should get raw values');
+        t.deepEqual(result, expected, 'should get values');
         
         fs.readdir = readdir;
         fs.stat = stat;
@@ -208,7 +208,7 @@ test('readify: result: "raw"', (t) => {
     
     update();
     
-    readify('.', 'raw', (error, result) => {
+    readify('.', {type: 'raw'}, (error, result) => {
         t.deepEqual(expected, result, 'should get raw values');
         
         fs.readdir = readdir;
@@ -257,7 +257,8 @@ test('readify: result: "raw": dir', (t) => {
     
     before();
     
-    readify('.', 'raw', (error, result) => {
+    const type = 'raw';
+    readify('.', {type}, (error, result) => {
         t.deepEqual(expected, result, 'should get raw values');
         
         fs.readdir = readdir;
@@ -265,6 +266,13 @@ test('readify: result: "raw": dir', (t) => {
         
         t.end();
     });
+});
+
+test('readify: type: wrong', (t) => {
+    const fn = () => readify('.', {type: 1}, () => {});
+    
+    t.throws(fn, /type should be a string or not to be defined!/, 'should throw when type has wrong type');
+    t.end();
 });
 
 test('readify: result: uid: 0', (t) => {
