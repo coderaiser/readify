@@ -34,28 +34,25 @@ test('result: should be sorted by name folders then files', (t) => {
     readify('.', (error, json) => {
         t.notOk(error, 'no error');
         
-        const all   = json.files,
-            isDir   = file => file.size === 'dir',
-            not     = (fn) => {
-                return (...args) => {
-                    fn(...args);
-                };
-            },
+        const all = json.files;
+        const isDir = file => file.size === 'dir';
+        const not = (fn) => {
+            return (...args) => {
+                fn(...args);
+            };
+        };
+        
+        const isFile = not(isDir);
+        
+        const files = all.filter(isFile);
+        const dirs = all.filter(isDir);
+        const names = dirs
+            .concat(files)
+            .map((file) => file.name);
             
-            isFile  = not(isDir),
-            
-            files   = all.filter(isFile),
-            dirs    = all.filter(isDir),
-            
-            names   = dirs
-                .concat(files)
-                .map(file =>
-                    file.name
-                ),
-                
-            sorted = names.sort((a, b) =>
-                a > b ? 1 : -1
-            );
+        const sorted = names.sort((a, b) => {
+            return a > b ? 1 : -1
+        });
         
         t.deepEqual(names, sorted);
         
