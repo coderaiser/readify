@@ -51,7 +51,7 @@ test('result: should be sorted by name folders then files', (t) => {
             .map((file) => file.name);
             
         const sorted = names.sort((a, b) => {
-            return a > b ? 1 : -1
+            return a > b ? 1 : -1;
         });
         
         t.deepEqual(names, sorted);
@@ -455,6 +455,82 @@ test('readify: nicki on win', (t) => {
             value: 'linux'
         });
         
+        t.end();
+    });
+});
+
+test('readify sort: name asc', (t) => {
+    const files = [
+        '1.txt',
+        '2.txt',
+        '3.txt'
+    ];
+    
+    readify('./test/fixture/attr_sort', {sort: 'name'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: name desc', (t) => {
+    const files = [
+        '3.txt',
+        '2.txt',
+        '1.txt'
+    ];
+    
+    readify('./test/fixture/attr_sort', {sort: 'name', order: 'desc'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: size asc', (t) => {
+    const files = [
+        '3.txt',
+        '1.txt',
+        '2.txt'
+    ];
+    
+    readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: size asc raw', (t) => {
+    const files = [
+        '3.txt',
+        '1.txt',
+        '2.txt'
+        ];
+    
+    readify('./test/fixture/attr_sort', {sort: 'size', type: 'raw'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map(function(file) {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+// OMG: it's only for coverage mdate testing is kidda tricky
+test('readify sort: date', (t) => {
+    readify('./test/fixture/attr_sort', {sort: 'date'}, (error) => {
+        t.notOk(error, 'no error');
         t.end();
     });
 });
