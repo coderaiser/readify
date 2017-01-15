@@ -457,6 +457,87 @@ test('readify: nicki on win', (t) => {
     });
 });
 
+test('readify: options: order: wrong', (t) => {
+    const fn = () => readify('.', {order: 'wrong'}, noop);
+    
+    t.throws(fn, /order can be "asc" or "desc" only!/, 'should throw when order is wrong');
+    t.end();
+});
+
+test('readify: options: sortBy: wrong', (t) => {
+    const fn = () => readify('.', {sort: 5}, noop);
+    
+    t.throws(fn, /sort should be a string!/, 'should throw when sortBy not string');
+    t.end();
+});
+
+test('readify sort: name asc', (t) => {
+    const files = [
+        '1.txt',
+        '2.txt',
+        '3.txt'
+    ];
+    
+    readify('./test/fixture/attr_sort', {sort: 'name'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map((file) => {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: name descending', (t) => {
+    const files = [
+        '3.txt',
+        '2.txt',
+        '1.txt'
+    ];
+    
+    readify('./test/fixture/attr_sort', {sort: 'name', order: 'desc'}, (error, data) => {
+        t.notOk(error, 'no error');
+        data.files = data.files.map((file) => {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: size asc', (t) => {
+    const files = [
+        '3.txt',
+        '1.txt',
+        '2.txt'
+    ];
+    
+    readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'}, (error, data) => {
+        data.files = data.files.map((file) => {
+            return file.name;
+        });
+        
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
+test('readify sort: size asc raw', (t) => {
+    const files = [
+        '3.txt',
+        '1.txt',
+        '2.txt'
+    ];
+    
+    readify('./test/fixture/attr_sort', {sort: 'size', type: 'raw'}, (error, data) => {
+        data.files = data.files.map((file) => {
+            return file.name;
+        });
+        t.deepEqual(data.files, files, 'correct order');
+        t.end();
+    });
+});
+
 test('readify: nicki: error ', (t) => {
     const fn = sinon.stub();
     const e = Error('nicki error');
