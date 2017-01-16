@@ -51,7 +51,7 @@ test('result: should be sorted by name folders then files', (t) => {
             .map((file) => file.name);
             
         const sorted = names.sort((a, b) => {
-            return a > b ? 1 : -1
+            return a > b ? 1 : -1;
         });
         
         t.deepEqual(names, sorted);
@@ -161,108 +161,6 @@ test('readify: result: owner', (t) => {
     });
 });
 
-test('readify: result: "raw"', (t) => {
-    const update = () => {
-        delete require.cache[require.resolve('..')];
-        delete require.cache[require.resolve('../lib/readdir')];
-        readify = require('..');
-    };
-    
-    const {readdir, stat} = fs;
-    
-    const name = 'hello.txt';
-    const mode = 16893;
-    const size = 1024;
-    const mtime = new Date();
-    const uid = 1000;
-    
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
-    
-    fs.stat = (name, fn) => {
-        fn(null, {
-            isDirectory: noop,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
-    
-    const expected = {
-        path: './',
-        files: [{
-            name,
-            size,
-            date: mtime,
-            owner: uid,
-            mode
-        }]
-    };
-    
-    update();
-    
-    readify('.', {type: 'raw'}, (error, result) => {
-        t.deepEqual(expected, result, 'should get raw values');
-        
-        fs.readdir = readdir;
-        fs.stat = stat;
-        
-        update();
-        
-        t.end();
-    });
-});
-
-test('readify: result: "raw": dir', (t) => {
-    const {readdir, stat} = fs;
-    
-    const name = 'hello.txt';
-    const mode = 16893;
-    const size = 1024;
-    const mtime = new Date();
-    const uid = 1000;
-    
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
-    
-    fs.stat = (name, fn) => {
-        fn(null, {
-            isDirectory: () => true,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
-    
-    const expected = {
-        path: './',
-        files: [{
-            name,
-            size: 'dir',
-            date: mtime,
-            owner: uid,
-            mode
-        }]
-    };
-    
-    before();
-    
-    const type = 'raw';
-    readify('.', {type}, (error, result) => {
-        t.deepEqual(expected, result, 'should get raw values');
-        
-        fs.readdir = readdir;
-        fs.stat = stat;
-        
-        t.end();
-    });
-});
 
 test('readify: type: wrong', (t) => {
     const fn = () => readify('.', {type: 1}, () => {});
@@ -271,6 +169,106 @@ test('readify: type: wrong', (t) => {
     t.end();
 });
 
+test('readify: result', (t) => {
+    const expected = {
+        path: './',
+        files: [{
+            name: 'readdir.js',
+            size: '1.59kb',
+            date: '12.01.2017',
+            owner: 'root',
+            mode: 'rw- rw- r--',
+        }, {
+            name: 'readify.js',
+            size: '3.46kb',
+            date: '12.01.2017',
+            owner: 'root',
+            mode: 'rw- rw- r--',
+        }]
+    };
+    
+    const readdir = (name, fn) => {
+        fn(null, [{
+            name: 'readdir.js',
+            size: 1629,
+            date: new Date('2017-01-12T08:31:58.308Z'),
+            owner: 0,
+            mode: 33204
+        }, {
+            name: 'readify.js',
+            size: 3538,
+            date: new Date('2017-01-12T09:01:35.288Z'),
+            owner: 0,
+            mode: 33204
+        }]);
+    };
+     
+    clean();
+    
+    require('../lib/readdir');
+    stub('../lib/readdir', readdir);
+    readify = require('../lib/readify');
+    
+    readify('.', (error, result) => {
+        t.deepEqual(result, expected, 'should get values');
+        
+        clean();
+        readify = require('../lib/readify');
+        t.end();
+    });
+});
+
+test('readify: result: raw', (t) => {
+    const date = new Date('2017-01-12T08:31:58.308Z');
+    const owner = 0;
+    
+    const expected = {
+        path: './',
+        files: [{
+            name: 'readdir.js',
+            size: 1629,
+            date,
+            owner,
+            mode: 33204
+        }, {
+            name: 'readify.js',
+            size: 3538,
+            date,
+            owner,
+            mode: 33204
+        }]
+    };
+    
+    const readdir = (name, fn) => {
+        fn(null, [{
+            name: 'readdir.js',
+            size: 1629,
+            date,
+            owner,
+            mode: 33204
+        }, {
+            name: 'readify.js',
+            size: 3538,
+            date,
+            owner,
+            mode: 33204
+        }]);
+    };
+     
+    clean();
+    
+    require('../lib/readdir');
+    stub('../lib/readdir', readdir);
+    readify = require('../lib/readify');
+    
+    readify('.', {type: 'raw'}, (error, result) => {
+        t.deepEqual(result, expected, 'should get values');
+        
+        clean();
+        readify = require('../lib/readify');
+        t.end();
+    });
+});
 test('readify: result: uid: 0', (t) => {
     const {readdir, stat} = fs;
     
@@ -364,7 +362,7 @@ test('readify: result: nicki: no name found', (t) => {
     before();
     
     readify('.', (error, result) => {
-        t.deepEqual(result, expected, 'should get raw values');
+        t.deepEqual(result, expected, 'should get values');
         
         fs.readdir = readdir;
         fs.stat = stat;
@@ -479,8 +477,16 @@ test('readify: nicki: error ', (t) => {
 });
 
 function before() {
+    clean();
+    readify = require('..');
+}
+
+function clean() {
     delete require.cache[require.resolve('..')];
     delete require.cache[require.resolve('../lib/readdir')];
-    readify = require('..');
+}
+
+function stub(name, fn) {
+    require.cache[require.resolve(name)].exports = fn;
 }
 
