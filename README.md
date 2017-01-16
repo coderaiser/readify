@@ -53,6 +53,13 @@ radify('/', {type: 'raw'}, (error, data) => {
         }]
     }
 });
+
+// sort output
+// available sort option: name, size, date
+// available order option: asc, desc
+readify('/', {sort: 'size', order: 'desc'}, (error, data) => {
+    console.log(data);
+});
 ```
 
 ## Environments
