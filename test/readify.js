@@ -2,7 +2,6 @@
 
 let readify = require('..');
 
-const os = require('os');
 const fs = require('fs');
 const test = require('tape');
 const sinon = require('sinon');
@@ -404,24 +403,6 @@ test('result: file names should not be empty', t => {
     });
 });
 
-test('result: read empty directory', function(t) {
-    var tmp = Math.random(),
-        dir = os.tmpdir() + '/readify-' + tmp;
-    
-    fs.mkdir(dir, function(error) {
-        t.notOk(error, 'directory created');
-        
-        readify(dir, function(error) {
-            t.notOk(error, 'successfully read');
-            
-            fs.rmdir(dir, function(error) {
-                t.notOk(error, 'directory removed');
-                t.end();
-            });
-        });
-    });
-});
-
 test('arguments: exception when no path', t => {
     t.throws(readify, /path should be string!/, 'should throw when no path');
     t.end();
@@ -464,38 +445,41 @@ test('readify: options: order: wrong', (t) => {
     t.end();
 });
 
-test('readify: options: sortBy: wrong', (t) => {
+test('readify: options: sort: wrong', (t) => {
     const fn = () => readify('.', {sort: 5}, noop);
     
     t.throws(fn, /sort should be a string!/, 'should throw when sortBy not string');
     t.end();
 });
 
-test('readify sort: name asc', (t) => {
+test('readify: options: sort: name', (t) => {
     const files = [
         '1.txt',
         '2.txt',
         '3.txt'
     ];
     
-    readify('./test/fixture/attr_sort', {sort: 'name'}, (error, data) => {
-        t.notOk(error, 'no error');
-        data.files = data.files.map((file) => {
+    const sort = 'name';
+    readify('./test/fixture/attr_sort', {sort}, (error, data) => {
+        const sorted = data.files.map((file) => {
             return file.name;
         });
-        t.deepEqual(data.files, files, 'correct order');
+        
+        t.deepEqual(sorted, files, 'should sort by name');
         t.end();
     });
 });
 
-test('readify sort: name descending', (t) => {
+test('readify: sort: name: desc', (t) => {
     const files = [
         '3.txt',
         '2.txt',
         '1.txt'
     ];
     
-    readify('./test/fixture/attr_sort', {sort: 'name', order: 'desc'}, (error, data) => {
+    const sort = 'name';
+    const order = 'desc';
+    readify('./test/fixture/attr_sort', {sort, order}, (error, data) => {
         t.notOk(error, 'no error');
         data.files = data.files.map((file) => {
             return file.name;
@@ -541,7 +525,7 @@ test('readify sort: size asc raw', (t) => {
 test('readify: nicki: error ', (t) => {
     const fn = sinon.stub();
     const e = Error('nicki error');
-    const nicki = function(callback) {
+    const nicki = (callback) => {
         fn(e);
         callback(e);
     };
