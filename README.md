@@ -19,7 +19,18 @@ With npm:
 npm i readify --save
 ```
 
-## How to use?
+## API
+
+### readify(dir [, options, ], callback)
+
+- **dir** - path of a directory
+- **options** - `object` can contain:
+  - `type` - type of result, could be "raw"
+  - `sort` - sort by: name, size, date
+  - `order` - "asc" or "desc" for ascending and descending order (default: "asc")
+- **callback** - `function`
+
+## Examples
 
 ```js
 const readify = require('readify');
@@ -40,6 +51,21 @@ radify('/', (error, data) => {
 });
 
 radify('/', {type: 'raw'}, (error, data) => {
+    console.log(data);
+    // output
+    {
+        path: '/',
+        files:  [{
+            name: 'readify.js',
+            size: 4735,
+            date: 2016-11-21T13:37:55.275Z,
+            owner: 1000,
+            mode: 33204
+        }]
+    }
+});
+
+radify('/', {type: 'raw', sort: 'size', order: 'desc'}, (error, data) => {
     console.log(data);
     // output
     {
