@@ -59,108 +59,6 @@ test('result: should be sorted by name folders then files', (t) => {
     });
 });
 
-test('readify: result: no owner', (t) => {
-    const update = () => {
-        delete require.cache[require.resolve('..')];
-        delete require.cache[require.resolve('../lib/readdir')];
-        readify = require('..');
-    };
-    
-    const {readdir, stat} = fs;
-    
-    const name = 'hello.txt';
-    const mode = 16893;
-    const size = 1024;
-    const mtime = new Date('2016-11-23T14:36:46.311Z');
-    const uid = 2;
-    
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
-    
-    fs.stat = (name, fn) => {
-        fn(null, {
-            isDirectory: noop,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
-    
-    const expected = {
-        path: './',
-        files: [{
-            name,
-            size: '1.00kb',
-            date: '23.11.2016',
-            /* depends on npm@nicki     */
-            /* could be different   */
-            /* owner: 'bin',        */
-            mode: 'rwx rwx r-x'
-        }]
-    };
-    
-    update();
-    
-    readify('.', (error, result) => {
-        delete result.files[0].owner;
-        t.deepEqual(result, expected, 'should get values');
-        
-        fs.readdir = readdir;
-        fs.stat = stat;
-        
-        update();
-        
-        t.end();
-    });
-});
-
-test('readify: result: owner', (t) => {
-    const update = () => {
-        delete require.cache[require.resolve('..')];
-        readify = require('..');
-    };
-    
-    const {readdir, stat} = fs;
-    
-    const name = 'hello.txt';
-    const mode = 16893;
-    const size = 1024;
-    const mtime = new Date('2016-11-23T14:36:46.311Z');
-    const uid = 2;
-    
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
-    
-    fs.stat = (name, fn) => {
-        fn(null, {
-            isDirectory: noop,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
-    
-    update();
-    
-    readify('.', (error, result) => {
-        t.ok(result.files[0].owner, 'should contain owner');
-        
-        fs.readdir = readdir;
-        fs.stat = stat;
-        
-        update();
-        
-        t.end();
-    });
-});
-
-
 test('readify: type: wrong', (t) => {
     const fn = () => readify('.', {type: 1}, () => {});
     
@@ -307,7 +205,7 @@ test('readify: result: uid: 0', (t) => {
         }]
     };
     
-    before();
+    reload();
     
     readify('.', (error, result) => {
         t.deepEqual(result, expected, 'should get raw values');
@@ -358,7 +256,7 @@ test('readify: result: nicki: no name found', (t) => {
         }]
     };
     
-    before();
+    reload();
     
     readify('.', (error, result) => {
         t.deepEqual(result, expected, 'should get values');
@@ -422,10 +320,10 @@ test('readify: nicki on win', (t) => {
     
     const nicki = sinon.spy();
     
-    require('nicki/legacy');
+    const original = require('nicki/legacy');
     require.cache[require.resolve('nicki/legacy')].exports = nicki;
     
-    before();
+    reload();
     
     readify(__dirname, () => {
         t.notOk(nicki.called, 'nicki should not be called');
@@ -433,7 +331,84 @@ test('readify: nicki on win', (t) => {
         Object.defineProperty(process, 'platform', {
             value: 'linux'
         });
+    
+        require.cache[require.resolve('nicki/legacy')].exports = original;
         
+        t.end();
+    });
+});
+
+test('readify: result: sort: size (with dir)', (t) => {
+    const expected = {
+        path: './',
+        files: [{
+            name: 'lib',
+            size: 'dir',
+            date: '12.01.2017',
+            owner: 'root',
+            mode: 'rw- rw- r--',
+        }, {
+            name: 'test',
+            size: 'dir',
+            date: '12.01.2017',
+            owner: 'root',
+            mode: 'rw- rw- r--',
+        }, {
+            name: 'readdir.js',
+            size: '1.59kb',
+            date: '12.01.2017',
+            owner: 'root',
+            mode: 'rw- rw- r--',
+        }, {
+            name: 'readify.js',
+            size: '3.46kb',
+            date: '12.01.2017',
+            owner: 'root',
+            mode: 'rw- rw- r--',
+        }]
+    };
+    
+    const date = new Date('2017-01-12T09:01:35.288Z');
+    const readdir = (name, fn) => {
+        fn(null, [{
+            name: 'readify.js',
+            size: 3538,
+            date,
+            owner: 0,
+            mode: 33204
+        }, {
+            name: 'test',
+            size: 'dir',
+            date,
+            owner: 0,
+            mode: 33204
+        }, {
+            name: 'readdir.js',
+            size: 1629,
+            date,
+            owner: 0,
+            mode: 33204
+        }, {
+            name: 'lib',
+            size: 'dir',
+            date,
+            owner: 0,
+            mode: 33204
+        }]);
+    };
+     
+    clean();
+    
+    require('../lib/readdir');
+    stub('../lib/readdir', readdir);
+    const readify = require('../lib/readify');
+    
+    const sort = 'size';
+    readify('.', {sort}, (error, result) => {
+        t.deepEqual(result, expected, 'should get values');
+        
+        clean();
+        require('../lib/readify');
         t.end();
     });
 });
@@ -533,7 +508,7 @@ test('readify: nicki: error ', (t) => {
     require('nicki/legacy');
     require.cache[require.resolve('nicki/legacy')].exports = nicki;
     
-    before();
+    reload();
     
     readify(__dirname, () => {
         t.ok(fn.calledWith(e), 'should call callback when nicki has error');
@@ -541,7 +516,7 @@ test('readify: nicki: error ', (t) => {
     });
 });
 
-function before() {
+function reload() {
     clean();
     readify = require('..');
 }
