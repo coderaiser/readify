@@ -66,36 +66,38 @@ test('readify: type: wrong', (t) => {
     t.end();
 });
 
-test('readify: result', (t) => {
+test('readify: result: should sort by name', (t) => {
     const expected = {
         path: './',
         files: [{
-            name: 'readdir.js',
-            size: '1.59kb',
+            name: '.readify.js',
+            size: '3.46kb',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
         }, {
-            name: 'readify.js',
-            size: '3.46kb',
+            name: 'readdir.js',
+            size: '1.59kb',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
         }]
     };
     
+    const date = new Date('2017-01-12T08:31:58.308Z');
+    const owner = 0;
     const readdir = (name, fn) => {
         fn(null, [{
             name: 'readdir.js',
             size: 1629,
-            date: new Date('2017-01-12T08:31:58.308Z'),
-            owner: 0,
+            date,
+            owner,
             mode: 33204
         }, {
-            name: 'readify.js',
+            name: '.readify.js',
             size: 3538,
-            date: new Date('2017-01-12T09:01:35.288Z'),
-            owner: 0,
+            date,
+            owner,
             mode: 33204
         }]);
     };
@@ -465,18 +467,16 @@ test('readify: sort: name: desc', (t) => {
 });
 
 test('readify sort: size asc', (t) => {
-    const files = [
+    const expected = [
         '3.txt',
         '1.txt',
         '2.txt'
     ];
     
-    readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'}, (error, data) => {
-        data.files = data.files.map((file) => {
-            return file.name;
-        });
+    readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'}, (error, {files})=> {
+        const sorted = files.map((file) => file.name);
         
-        t.deepEqual(data.files, files, 'correct order');
+        t.deepEqual(expected, sorted, 'correct order');
         t.end();
     });
 });
