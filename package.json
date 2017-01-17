@@ -39,7 +39,15 @@
   },
   "keywords": [
     "read",
-    "directory"
+    "file",
+    "directory",
+    "stat",
+    "size",
+    "name",
+    "date",
+    "owner",
+    "uid",
+    "format"
   ],
   "license": "MIT",
   "main": "lib/readify.js",
