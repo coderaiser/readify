@@ -1,6 +1,6 @@
 {
   "name": "readify",
-  "version": "4.1.3",
+  "version": "4.1.4",
   "author": "coderaiser <mnemonic.enemy@gmail.com> (https://github.com/coderaiser)",
   "description": "Read directory content with file attributes: size, date, owner, mode",
   "homepage": "http://github.com/coderaiser/readify",
