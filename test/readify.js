@@ -344,13 +344,13 @@ test('readify: result: sort: size (with dir)', (t) => {
     const expected = {
         path: './',
         files: [{
-            name: 'lib',
+            name: 'test',
             size: 'dir',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
         }, {
-            name: 'test',
+            name: 'lib',
             size: 'dir',
             date: '12.01.2017',
             owner: 'root',
