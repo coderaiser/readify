@@ -36,7 +36,7 @@
     "es6-promisify": "^5.0.0",
     "execon": "^1.2.0",
     "format-io": "^0.9.4",
-    "nicki": "^2.0.1",
+    "nicki": "^3.0.0",
     "shortdate": "^1.2.0",
     "zames": "^1.0.0"
   },

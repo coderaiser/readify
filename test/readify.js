@@ -322,8 +322,8 @@ test('readify: nicki on win', (t) => {
     
     const nicki = sinon.spy();
     
-    const original = require('nicki/legacy');
-    require.cache[require.resolve('nicki/legacy')].exports = nicki;
+    const original = require('nicki');
+    require.cache[require.resolve('nicki')].exports = nicki;
     
     reload();
     
@@ -334,7 +334,7 @@ test('readify: nicki on win', (t) => {
             value: 'linux'
         });
     
-        require.cache[require.resolve('nicki/legacy')].exports = original;
+        require.cache[require.resolve('nicki')].exports = original;
         
         t.end();
     });
@@ -505,8 +505,8 @@ test('readify: nicki: error ', (t) => {
         callback(e);
     };
     
-    require('nicki/legacy');
-    require.cache[require.resolve('nicki/legacy')].exports = nicki;
+    require('nicki');
+    require.cache[require.resolve('nicki')].exports = nicki;
     
     reload();
     
