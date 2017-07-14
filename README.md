@@ -80,15 +80,6 @@ radify('/', {type: 'raw', sort: 'size', order: 'desc'}, (error, data) => {
     }
 });
 ```
-
-## Environments
-
-In old `node.js` environments that supports `es5` only, `readify` could be used with:
-
-```js
-var readify = require('readify/legacy');
-```
-
 ## License
 
 MIT
