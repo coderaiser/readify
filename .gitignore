@@ -1,6 +1,5 @@
 .*
 node_modules
-legacy
 npm-debug.log
 coverage
 
