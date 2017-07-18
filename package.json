@@ -10,7 +10,8 @@
   },
   "scripts": {
     "lint": "redrun codestyle lint:*",
-    "lint:eslint": "eslint lib test",
+    "lint:eslint:lib": "eslint lib",
+    "lint:eslint:test": "eslint -c .eslintrc.test test --no-eslintrc",
     "codestyle": "jshint lib test && jscs --esnext lib test",
     "report": "nyc report --reporter=text-lcov | coveralls",
     "coverage": "nyc npm test",
@@ -48,6 +49,7 @@
   "devDependencies": {
     "coveralls": "^2.11.6",
     "eslint": "^4.0.0",
+    "eslint-plugin-node": "^5.1.0",
     "jscs": "^3.0.3",
     "jshint": "^2.9.1",
     "nodemon": "^1.11.0",
