@@ -35,7 +35,7 @@ npm i readify --save
 ```js
 const readify = require('readify');
 
-radify('/', (error, data) => {
+readify('/', (error, data) => {
     console.log(data);
     // output
     {
@@ -50,7 +50,7 @@ radify('/', (error, data) => {
     }
 });
 
-radify('/', {type: 'raw'}, (error, data) => {
+readify('/', {type: 'raw'}, (error, data) => {
     console.log(data);
     // output
     {
@@ -65,7 +65,7 @@ radify('/', {type: 'raw'}, (error, data) => {
     }
 });
 
-radify('/', {type: 'raw', sort: 'size', order: 'desc'}, (error, data) => {
+readify('/', {type: 'raw', sort: 'size', order: 'desc'}, (error, data) => {
     console.log(data);
     // output
     {
