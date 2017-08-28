@@ -68,7 +68,6 @@ test('readdir: result', (t) => {
     });
 });
 
-
 function update() {
     delete require.cache[require.resolve('../lib/readdir')];
     readdir = require('../lib/readdir');
