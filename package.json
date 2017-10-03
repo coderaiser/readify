@@ -47,7 +47,7 @@
     "node": ">=4"
   },
   "devDependencies": {
-    "coveralls": "^2.11.6",
+    "coveralls": "^3.0.0",
     "eslint": "^4.0.0",
     "eslint-plugin-node": "^5.1.0",
     "jscs": "^3.0.3",
