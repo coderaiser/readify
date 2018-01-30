@@ -1,3 +1,12 @@
+2018.01.30, v5.0.2
+
+feature:
+- (readify) add sort from npm
+- (package) sinon v4.0.0
+- (package) coveralls v3.0.0
+- (package) sinon v3.0.0
+
+
 2017.07.18, v5.0.1
 
 fix:
