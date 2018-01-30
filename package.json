@@ -21,6 +21,7 @@
     "watcher": "nodemon -w test -w lib --exec"
   },
   "dependencies": {
+    "@cloudcmd/sortify": "^1.0.0",
     "currify": "^2.0.0",
     "es6-promisify": "^5.0.0",
     "execon": "^1.2.0",

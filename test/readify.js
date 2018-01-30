@@ -461,7 +461,7 @@ test('readify: sort: name: desc', (t) => {
         data.files = data.files.map((file) => {
             return file.name;
         });
-        t.deepEqual(data.files, files, 'correct order');
+        t.deepEqual(data.files, files, 'should equal');
         t.end();
     });
 });
