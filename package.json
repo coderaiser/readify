@@ -24,7 +24,7 @@
     "@cloudcmd/formatify": "^1.0.0",
     "@cloudcmd/sortify": "^1.0.0",
     "currify": "^2.0.0",
-    "es6-promisify": "^5.0.0",
+    "es6-promisify": "^6.0.0",
     "execon": "^1.2.0",
     "format-io": "^0.9.4",
     "nicki": "^3.0.0",
