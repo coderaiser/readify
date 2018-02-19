@@ -9,10 +9,9 @@
     "url": "git://github.com/coderaiser/readify.git"
   },
   "scripts": {
-    "lint": "redrun codestyle lint:*",
+    "lint": "redrun lint:*",
     "lint:eslint:lib": "eslint lib",
     "lint:eslint:test": "eslint -c .eslintrc.test test --no-eslintrc",
-    "codestyle": "jshint lib test && jscs --esnext lib test",
     "report": "nyc report --reporter=text-lcov | coveralls",
     "coverage": "nyc npm test",
     "test": "tape test/*.js",
@@ -52,8 +51,6 @@
     "coveralls": "^3.0.0",
     "eslint": "^4.0.0",
     "eslint-plugin-node": "^6.0.0",
-    "jscs": "^3.0.3",
-    "jshint": "^2.9.1",
     "nodemon": "^1.11.0",
     "nyc": "^11.0.2",
     "redrun": "^5.0.1",
