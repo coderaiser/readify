@@ -1,7 +1,7 @@
 .*
-dist
 test
 coverage
+yarn-error.log
 
 *.swp
 
