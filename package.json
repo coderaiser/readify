@@ -28,7 +28,7 @@
     "format-io": "^0.9.4",
     "nicki": "^3.0.0",
     "shortdate": "^1.2.0",
-    "zames": "^1.0.0"
+    "zames": "^2.0.0"
   },
   "keywords": [
     "read",
