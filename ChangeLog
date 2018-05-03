@@ -1,3 +1,14 @@
+2018.05.03, v5.0.5
+
+feature:
+- (package) zames v2.0.0
+- (travis) add node v10
+- (package) sinon v5.0.3
+- (package) redrun v6.0.0
+- (package) rm jscs, jshint
+- (package) eslint-plugin-node v6.0.0
+
+
 2018.01.31, v5.0.4
 
 feature:
