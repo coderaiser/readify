@@ -2,11 +2,11 @@
 
 [NPMIMGURL]:                https://img.shields.io/npm/v/readify.svg?style=flat
 [BuildStatusIMGURL]:        https://img.shields.io/travis/coderaiser/readify/master.svg?style=flat
-[DependencyStatusIMGURL]:   https://img.shields.io/gemnasium/coderaiser/readify.svg?style=flat
+[DependencyStatusIMGURL]:   https://img.shields.io/david/coderaiser/readify.svg?style=flat
 [LicenseIMGURL]:            https://img.shields.io/badge/license-MIT-317BF9.svg?style=flat
 [NPMURL]:                   https://npmjs.org/package/readify "npm"
 [BuildStatusURL]:           https://travis-ci.org/coderaiser/readify  "Build Status"
-[DependencyStatusURL]:      https://gemnasium.com/coderaiser/readify "Dependency Status"
+[DependencyStatusURL]:      https://david-dm.org/coderaiser/readify "Dependency Status"
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
 
 Read directory content with file attributes: size, date, owner, mode.
