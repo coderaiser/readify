@@ -1,3 +1,11 @@
+2018.06.12, v5.0.6
+
+feature:
+- (package) format-io v1.0.1
+- (package) sinon v6.0.0
+- (package) nyc v12.0.2
+
+
 2018.05.03, v5.0.5
 
 feature:
