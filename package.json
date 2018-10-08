@@ -27,8 +27,7 @@
     "execon": "^1.2.0",
     "format-io": "^1.0.1",
     "nicki": "^3.0.0",
-    "shortdate": "^1.2.0",
-    "zames": "^2.0.0"
+    "shortdate": "^1.2.0"
   },
   "keywords": [
     "read",

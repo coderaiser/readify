@@ -1,73 +1,72 @@
 'use strict';
 
-let readify = require('..');
-
 const fs = require('fs');
 
 const test = require('tape');
 const sinon = require('sinon');
+const tryToCatch = require('try-to-catch');
+const mockRequire = require('mock-require');
+const {reRequire} = mockRequire;
+
 const exec = require('execon');
 const shortdate = require('shortdate');
 
+const readify = require('..');
+
 const noop = () => {};
 
-test('path: wrong', (t) => {
-    readify('/wrong/path', (error) => {
-        t.ok(error, error.message);
-        t.end();
-    });
-});
-
-test('path: correct', (t) => {
-    readify('.', (error, json) => {
-        t.notOk(error, 'no error');
-        
-        t.ok(json, 'json');
-        t.equal(typeof json.path, 'string');
-        t.ok(Array.isArray(json.files));
-        
-        t.end();
-    });
-});
-
-test('result: should be sorted by name folders then files', (t) => {
-    readify('.', (error, json) => {
-        t.notOk(error, 'no error');
-        
-        const all = json.files;
-        const isDir = file => file.size === 'dir';
-        const not = (fn) => {
-            return (...args) => {
-                fn(...args);
-            };
-        };
-        
-        const isFile = not(isDir);
-        
-        const files = all.filter(isFile);
-        const dirs = all.filter(isDir);
-        const names = dirs
-            .concat(files)
-            .map((file) => file.name);
-            
-        const sorted = names.sort((a, b) => {
-            return a > b ? 1 : -1;
-        });
-        
-        t.deepEqual(names, sorted);
-        
-        t.end();
-    });
-});
-
-test('readify: type: wrong', (t) => {
-    const fn = () => readify('.', {type: 1}, () => {});
+test('path: wrong', async (t) => {
+    const [error] = await tryToCatch(readify, '/wrong/path');
     
-    t.throws(fn, /type should be a string or not to be defined!/, 'should throw when type has wrong type');
+    t.ok(error, error.message);
     t.end();
 });
 
-test('readify: result: should sort by name', (t) => {
+test('path: correct', async (t) => {
+    const [error, json] = await tryToCatch(readify, '.');
+    
+    t.notOk(error, 'no error');
+    t.ok(json, 'json');
+    t.equal(typeof json.path, 'string');
+    t.ok(Array.isArray(json.files));
+    t.end();
+});
+
+test('result: should be sorted by name folders then files', async (t) => {
+    const [, json] = await tryToCatch(readify, '.');
+    
+    const all = json.files;
+    const isDir = file => file.size === 'dir';
+    const not = (fn) => {
+        return (...args) => {
+            !fn(...args);
+        };
+    };
+    
+    const isFile = not(isDir);
+    
+    const files = all.filter(isFile);
+    const dirs = all.filter(isDir);
+    const names = dirs
+        .concat(files)
+        .map((file) => file.name);
+        
+    const sorted = names.sort((a, b) => {
+        return a > b ? 1 : -1;
+    });
+    
+    t.deepEqual(names, sorted);
+    t.end();
+});
+
+test('readify: type: wrong', async (t) => {
+    const [e] = await tryToCatch(readify, '.', {type: 1});
+    
+    t.equal(e.message, 'type should be a string or not to be defined!', 'should throw when type has wrong type');
+    t.end();
+});
+
+test('readify: result: should sort by name', async (t) => {
     const expected = {
         path: './',
         files: [{
@@ -101,22 +100,18 @@ test('readify: result: should sort by name', (t) => {
         mode: 33204
     }];
      
-    clean();
+    mockRequire('../lib/readdir', readdir);
     
-    require('../lib/readdir');
-    stub('../lib/readdir', readdir);
-    readify = require('../lib/readify');
+    const readify = reRequire('../lib/readify');
+    const [, result] = await tryToCatch(readify, '.');
+     
+    mockRequire.stop('../lib/readdir');
     
-    readify('.', (error, result) => {
-        t.deepEqual(result, expected, 'should get values');
-        
-        clean();
-        readify = require('../lib/readify');
-        t.end();
-    });
+    t.deepEqual(result, expected, 'should get values');
+    t.end();
 });
 
-test('readify: result: raw', (t) => {
+test('readify: result: raw', async (t) => {
     const date = new Date('2017-01-12T08:31:58.308Z');
     const owner = 0;
     
@@ -151,21 +146,18 @@ test('readify: result: raw', (t) => {
         mode: 33204
     }];
      
-    clean();
+    mockRequire('../lib/readdir', readdir);
+    const readify = reRequire('../lib/readify');
     
-    require('../lib/readdir');
-    stub('../lib/readdir', readdir);
-    readify = require('../lib/readify');
+    const result = await readify('.', {type: 'raw'});
     
-    readify('.', {type: 'raw'}, (error, result) => {
-        t.deepEqual(result, expected, 'should get values');
-        
-        clean();
-        readify = require('../lib/readify');
-        t.end();
-    });
+    mockRequire.stop('../lib/readdir');
+    
+    t.deepEqual(result, expected, 'should get values');
+    t.end();
 });
-test('readify: result: uid: 0', (t) => {
+
+test('readify: result: uid: 0', async(t) => {
     const {readdir, stat} = fs;
     
     const name = 'hello.txt';
@@ -204,19 +196,18 @@ test('readify: result: uid: 0', (t) => {
         }]
     };
     
-    reload();
+    reRequire('../lib/readdir');
+    const readify = reRequire('..');
+    const result = await readify('.');
     
-    readify('.', (error, result) => {
-        t.deepEqual(result, expected, 'should get raw values');
-        
-        fs.readdir = readdir;
-        fs.stat = stat;
-        
-        t.end();
-    });
+    fs.readdir = readdir;
+    fs.stat = stat;
+    
+    t.deepEqual(result, expected, 'should get raw values');
+    t.end();
 });
 
-test('readify: result: nicki: no name found', (t) => {
+test('readify: result: nicki: no name found', async (t) => {
     const {readdir, stat} = fs;
     
     const name = 'hello.txt';
@@ -251,93 +242,84 @@ test('readify: result: nicki: no name found', (t) => {
             size: 'dir',
             date,
             owner: uid,
-            mode: 'rwx rwx r-x'
+            mode: 'rwx rwx r-x',
         }]
     };
     
-    reload();
+    reRequire('../lib/readdir');
+    const readify = reRequire('..');
+    const result = await readify('.');
     
-    readify('.', (error, result) => {
-        t.deepEqual(result, expected, 'should get values');
-        
-        fs.readdir = readdir;
-        fs.stat = stat;
-        
-        t.end();
-    });
-});
-
-test('result: files should have fields name, size, date, owner, mode', (t) => {
-    readify('.', (error, json) => {
-        const files       = json.files,
-            length      = files.length,
-            check       = () =>
-                files.filter((file) =>
-                    Object.keys(file).join(':') === 'name:size:date:owner:mode'
-                ).length;
-        
-        t.notOk(error, 'no error');
-        
-        t.equal(check(), length, 'files array do not have fields: name, size, date, owner, mode');
-        
-        t.end();
-    });
-});
-
-test('result: file names should not be empty', t => {
-    readify('.', (error, json) => {
-        const files       = json.files,
-            check       = () =>
-                files.filter((file) =>
-                    !file.name
-                ).forEach(file => {
-                    throw Error('Filename should not be empty!\n' + JSON.stringify(file));
-                });
-        
-        t.notOk(error, 'no error');
-        t.doesNotThrow(check, 'should not throw');
-        t.end();
-    });
-});
-
-test('arguments: exception when no path', t => {
-    t.throws(readify, /path should be string!/, 'should throw when no path');
+    fs.readdir = readdir;
+    fs.stat = stat;
+    
+    t.deepEqual(result, expected, 'should get values');
     t.end();
 });
 
-test('arguments: exception when no callback', t => {
-    const noCallback = exec.with(readify, '.');
+test('result: files should have fields name, size, date, owner, mode', async (t) => {
+    const json = await readify('.');
+    const {
+        files,
+    } = json;
     
-    t.throws(noCallback, /callback should be function!/, 'should throw when no callback');
+    const {length} = files;
+    const fields = files
+        .filter((file) =>
+            Object
+                .keys(file)
+                .join(':') === 'name:size:date:owner:mode'
+        );
+    
+    t.equal(fields.length, length, 'files array do not have fields: name, size, date, owner, mode');
     t.end();
 });
 
-test('readify: nicki on win', (t) => {
+test('result: file names should not be empty', async (t) => {
+    const [e, json] = await tryToCatch(readify, '.');
+    const files = json.files;
+    const check = () =>
+        files.filter((file) =>
+            !file.name
+        ).forEach(file => {
+            throw Error('Filename should not be empty!\n' + JSON.stringify(file));
+        });
+    
+    t.notOk(e, 'no error');
+    t.doesNotThrow(check, 'should not throw');
+    t.end();
+});
+
+test('arguments: exception when no path', async (t) => {
+    const [e] = await tryToCatch(readify);
+    t.equal(e.message, 'path should be string!', 'should throw when no path');
+    t.end();
+});
+
+test('readify: nicki on win', async (t) => {
     Object.defineProperty(process, 'platform', {
         value: 'win32'
     });
     
     const nicki = sinon.spy();
     
-    const original = require('nicki');
-    require.cache[require.resolve('nicki')].exports = nicki;
+    mockRequire('nicki', nicki);
     
-    reload();
+    const readify = reRequire('..');
     
-    readify(__dirname, () => {
-        t.notOk(nicki.called, 'nicki should not be called');
-        
-        Object.defineProperty(process, 'platform', {
-            value: 'linux'
-        });
+    await readify(__dirname);
     
-        require.cache[require.resolve('nicki')].exports = original;
-        
-        t.end();
+    Object.defineProperty(process, 'platform', {
+        value: 'linux'
     });
+    
+    mockRequire.stop('nicki');
+    
+    t.notOk(nicki.called, 'nicki should not be called');
+    t.end();
 });
 
-test('readify: result: sort: size (with dir)', (t) => {
+test('readify: result: sort: size (with dir)', async (t) => {
     const expected = {
         path: './',
         files: [{
@@ -394,105 +376,96 @@ test('readify: result: sort: size (with dir)', (t) => {
         mode: 33204
     }];
      
-    clean();
-    
-    require('../lib/readdir');
-    stub('../lib/readdir', readdir);
-    const readify = require('../lib/readify');
+    mockRequire('../lib/readdir', readdir);
+    const readify = reRequire('../lib/readify');
     
     const sort = 'size';
-    readify('.', {sort}, (error, result) => {
-        t.deepEqual(result, expected, 'should get values');
-        
-        clean();
-        require('../lib/readify');
-        t.end();
-    });
-});
-
-test('readify: options: order: wrong', (t) => {
-    const fn = () => readify('.', {order: 'wrong'}, noop);
+    const result = await readify('.', {sort});
     
-    t.throws(fn, /order can be "asc" or "desc" only!/, 'should throw when order is wrong');
+    mockRequire.stop('../lib/readdir');
+    
+    t.deepEqual(result, expected, 'should get values');
     t.end();
 });
 
-test('readify: options: sort: wrong', (t) => {
-    const fn = () => readify('.', {sort: 5}, noop);
+test('readify: options: order: wrong', async (t) => {
+    const [e] = await tryToCatch(readify, '.', {order: 'wrong'});
     
-    t.throws(fn, /sort should be a string!/, 'should throw when sortBy not string');
+    t.equal(e.message, 'order can be "asc" or "desc" only!', 'should throw when order is wrong');
     t.end();
 });
 
-test('readify: options: sort: name', (t) => {
+test('readify: options: sort: wrong', async (t) => {
+    const [e] = await tryToCatch(readify, '.', {sort: 5});
+    
+    t.equal(e.message, 'sort should be a string!', 'should throw when sortBy not string');
+    t.end();
+});
+
+test('readify: options: sort: name', async (t) => {
     const files = [
         '1.txt',
         '2.txt',
-        '3.txt'
+        '3.txt',
     ];
     
     const sort = 'name';
-    readify('./test/fixture/attr_sort', {sort}, (error, data) => {
-        const sorted = data.files.map((file) => {
-            return file.name;
-        });
-        
-        t.deepEqual(sorted, files, 'should sort by name');
-        t.end();
+    const data = await readify('./test/fixture/attr_sort', {sort});
+    const sorted = data.files.map((file) => {
+        return file.name;
     });
+    
+    t.deepEqual(sorted, files, 'should sort by name');
+    t.end();
 });
 
-test('readify: sort: name: desc', (t) => {
+test('readify: sort: name: desc', async (t) => {
     const files = [
         '3.txt',
         '2.txt',
-        '1.txt'
+        '1.txt',
     ];
     
     const sort = 'name';
     const order = 'desc';
-    readify('./test/fixture/attr_sort', {sort, order}, (error, data) => {
-        t.notOk(error, 'no error');
-        data.files = data.files.map((file) => {
-            return file.name;
-        });
-        t.deepEqual(data.files, files, 'should equal');
-        t.end();
-    });
+    
+    const data = await readify('./test/fixture/attr_sort', {sort, order});
+    data.files = data.files
+        .map((file) => file.name);
+    
+    t.deepEqual(data.files, files, 'should equal');
+    t.end();
 });
 
-test('readify sort: size asc', (t) => {
+test('readify sort: size asc', async (t) => {
     const expected = [
         '3.txt',
         '1.txt',
         '2.txt'
     ];
     
-    readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'}, (error, {files})=> {
-        const sorted = files.map((file) => file.name);
-        
-        t.deepEqual(expected, sorted, 'correct order');
-        t.end();
-    });
+    const {files} = await readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'});
+    const sorted = files.map((file) => file.name);
+    
+    t.deepEqual(expected, sorted, 'correct order');
+    t.end();
 });
 
-test('readify sort: size asc raw', (t) => {
+test('readify sort: size asc raw', async (t) => {
     const files = [
         '3.txt',
         '1.txt',
-        '2.txt'
+        '2.txt',
     ];
     
-    readify('./test/fixture/attr_sort', {sort: 'size', type: 'raw'}, (error, data) => {
-        data.files = data.files.map((file) => {
-            return file.name;
-        });
-        t.deepEqual(data.files, files, 'correct order');
-        t.end();
-    });
+    const data = await readify('./test/fixture/attr_sort', {sort: 'size', type: 'raw'});
+    data.files = data.files.map((file) => file.name);
+    
+    t.deepEqual(data.files, files, 'correct order');
+    t.end();
 });
 
-test('readify: nicki: error ', (t) => {
+test('readify: nicki: error ', async (t) => {
     const fn = sinon.stub();
     const e = Error('nicki error');
     const nicki = (callback) => {
@@ -500,28 +473,13 @@ test('readify: nicki: error ', (t) => {
         callback(e);
     };
     
-    require('nicki');
-    require.cache[require.resolve('nicki')].exports = nicki;
+    mockRequire('nicki', nicki);
     
-    reload();
+    const readify = reRequire('..');
     
-    readify(__dirname, () => {
-        t.ok(fn.calledWith(e), 'should call callback when nicki has error');
-        t.end();
-    });
+    await readify(__dirname);
+    
+    t.ok(fn.calledWith(e), 'should call callback when nicki has error');
+    t.end();
 });
-
-function reload() {
-    clean();
-    readify = require('..');
-}
-
-function clean() {
-    delete require.cache[require.resolve('..')];
-    delete require.cache[require.resolve('../lib/readdir')];
-}
-
-function stub(name, fn) {
-    require.cache[require.resolve(name)].exports = fn;
-}
 

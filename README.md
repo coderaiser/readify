@@ -16,42 +16,42 @@ Read directory content with file attributes: size, date, owner, mode.
 With npm:
 
 ```
-npm i readify --save
+npm i readify
 ```
 
 ## API
 
-### readify(dir [, options, ], callback)
+### readify(dir [, options, ])
 
 - **dir** - path of a directory
 - **options** - `object` can contain:
   - `type` - type of result, could be "raw"
   - `sort` - sort by: name, size, date
   - `order` - "asc" or "desc" for ascending and descending order (default: "asc")
-- **callback** - `function`
 
 ## Examples
 
 ```js
 const readify = require('readify');
+const tryToCatch = require('try-to-catch');
 
-readify('/', (error, data) => {
-    console.log(data);
-    // output
-    {
-        path: '/',
-        files:  [{
-            name: 'readify.js',
-            size: '4.22kb',
-            date: '20.02.2016',
-            owner: 'coderaiser',
-            mode: 'rw- rw- r--'
-        }]
-    }
+const [error, data] = await tryToCatch(readify, '/');
+console.log(data);
+// output
+{
+    path: '/',
+    files:  [{
+        name: 'readify.js',
+        size: '4.22kb',
+        date: '20.02.2016',
+        owner: 'coderaiser',
+        mode: 'rw- rw- r--'
+    }]
+}
 });
 
-readify('/', {type: 'raw'}, (error, data) => {
-    console.log(data);
+readify('/', {type: 'raw'})
+    .then(console.log);
     // output
     {
         path: '/',
@@ -65,8 +65,8 @@ readify('/', {type: 'raw'}, (error, data) => {
     }
 });
 
-readify('/', {type: 'raw', sort: 'size', order: 'desc'}, (error, data) => {
-    console.log(data);
+readify('/', {type: 'raw', sort: 'size', order: 'desc'})
+    .then(console.log);
     // output
     {
         path: '/',
