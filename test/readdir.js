@@ -2,28 +2,33 @@
 
 const fs = require('fs');
 const test = require('tape');
+const {reRequire} = require('mock-require');
+const tryToCatch = require('try-to-catch');
+
 const noop = () => {};
 
-let readdir = require('../lib/readdir');
-
-test('readdir: empty dir', (t) => {
-    const {readdir:readdirFS} = fs;
+test('readdir: empty dir', async (t) => {
+    const readdirFS = fs.readdir;
     
     fs.readdir = (dir, cb) => {
         cb(null, []);
     };
     
-    update();
+    const readdir = reRequire('../lib/readdir');
     
-    readdir('.', (e, result) => {
-        t.deepEqual(result, [], 'should return empty array');
-        fs.readdir = readdirFS;
-        t.end();
-    });
+    const [, result] = await tryToCatch(readdir, '.');
+    
+    fs.readdir = readdirFS;
+    
+    t.deepEqual(result, [], 'should return empty array');
+    t.end();
 });
 
-test('readdir: result', (t) => {
-    const {readdir:readdirFS, stat} = fs;
+test('readdir: result', async (t) => {
+    const {
+        readdir:readdirFS,
+        stat,
+    } = fs;
     
     const name = 'hello.txt';
     const mode = 16893;
@@ -54,22 +59,13 @@ test('readdir: result', (t) => {
         mode
     }];
     
-    update();
+    const readdir = reRequire('../lib/readdir');
+    const [, result] = await tryToCatch(readdir, '.');
     
-    readdir('.', (error, result) => {
-        t.deepEqual(expected, result, 'should get raw values');
-        
-        fs.readdir = readdirFS;
-        fs.stat = stat;
-        
-        update();
-        
-        t.end();
-    });
+    fs.readdir = readdirFS;
+    fs.stat = stat;
+    
+    t.deepEqual(expected, result, 'should get raw values');
+    t.end();
 });
-
-function update() {
-    delete require.cache[require.resolve('../lib/readdir')];
-    readdir = require('../lib/readdir');
-}
 

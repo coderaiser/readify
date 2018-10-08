@@ -45,16 +45,18 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "engines": {
-    "node": ">=4"
+    "node": ">=8.3.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.0",
     "eslint": "^5.0.0",
     "eslint-plugin-node": "^7.0.1",
+    "mock-require": "^3.0.2",
     "nodemon": "^1.11.0",
     "nyc": "^13.0.1",
     "redrun": "^7.0.0",
     "sinon": "^6.0.0",
-    "tape": "^4.2.1"
+    "tape": "^4.2.1",
+    "try-to-catch": "^1.0.2"
   }
 }

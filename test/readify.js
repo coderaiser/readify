@@ -3,6 +3,7 @@
 let readify = require('..');
 
 const fs = require('fs');
+
 const test = require('tape');
 const sinon = require('sinon');
 const exec = require('execon');
@@ -10,7 +11,7 @@ const shortdate = require('shortdate');
 
 const noop = () => {};
 
-test('path: wrong', t => {
+test('path: wrong', (t) => {
     readify('/wrong/path', (error) => {
         t.ok(error, error.message);
         t.end();
@@ -86,21 +87,19 @@ test('readify: result: should sort by name', (t) => {
     
     const date = new Date('2017-01-12T08:31:58.308Z');
     const owner = 0;
-    const readdir = (name, fn) => {
-        fn(null, [{
-            name: 'readdir.js',
-            size: 1629,
-            date,
-            owner,
-            mode: 33204
-        }, {
-            name: '.readify.js',
-            size: 3538,
-            date,
-            owner,
-            mode: 33204
-        }]);
-    };
+    const readdir = async () => [{
+        name: 'readdir.js',
+        size: 1629,
+        date,
+        owner,
+        mode: 33204
+    }, {
+        name: '.readify.js',
+        size: 3538,
+        date,
+        owner,
+        mode: 33204
+    }];
      
     clean();
     
@@ -138,21 +137,19 @@ test('readify: result: raw', (t) => {
         }]
     };
     
-    const readdir = (name, fn) => {
-        fn(null, [{
-            name: 'readdir.js',
-            size: 1629,
-            date,
-            owner,
-            mode: 33204
-        }, {
-            name: 'readify.js',
-            size: 3538,
-            date,
-            owner,
-            mode: 33204
-        }]);
-    };
+    const readdir = async () => [{
+        name: 'readdir.js',
+        size: 1629,
+        date,
+        owner,
+        mode: 33204
+    }, {
+        name: 'readify.js',
+        size: 3538,
+        date,
+        owner,
+        mode: 33204
+    }];
      
     clean();
     
@@ -371,33 +368,31 @@ test('readify: result: sort: size (with dir)', (t) => {
     };
     
     const date = new Date('2017-01-12T09:01:35.288Z');
-    const readdir = (name, fn) => {
-        fn(null, [{
-            name: 'readify.js',
-            size: 3538,
-            date,
-            owner: 0,
-            mode: 33204
-        }, {
-            name: 'test',
-            size: 'dir',
-            date,
-            owner: 0,
-            mode: 33204
-        }, {
-            name: 'readdir.js',
-            size: 1629,
-            date,
-            owner: 0,
-            mode: 33204
-        }, {
-            name: 'lib',
-            size: 'dir',
-            date,
-            owner: 0,
-            mode: 33204
-        }]);
-    };
+    const readdir = async () => [{
+        name: 'readify.js',
+        size: 3538,
+        date,
+        owner: 0,
+        mode: 33204
+    }, {
+        name: 'test',
+        size: 'dir',
+        date,
+        owner: 0,
+        mode: 33204
+    }, {
+        name: 'readdir.js',
+        size: 1629,
+        date,
+        owner: 0,
+        mode: 33204
+    }, {
+        name: 'lib',
+        size: 'dir',
+        date,
+        owner: 0,
+        mode: 33204
+    }];
      
     clean();
     
