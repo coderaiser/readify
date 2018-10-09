@@ -26,6 +26,7 @@
     "es6-promisify": "^6.0.0",
     "execon": "^1.2.0",
     "format-io": "^1.0.1",
+    "fs-readdir-with-file-types": "^1.0.1",
     "nicki": "^3.0.0",
     "shortdate": "^1.2.0",
     "try-to-catch": "^1.0.2"

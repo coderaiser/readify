@@ -45,7 +45,8 @@ console.log(data);
         size: '4.22kb',
         date: '20.02.2016',
         owner: 'coderaiser',
-        mode: 'rw- rw- r--'
+        mode: 'rw- rw- r--',
+        type: 'file',
     }]
 }
 });
@@ -60,7 +61,8 @@ readify('/', {type: 'raw'})
             size: 4735,
             date: 2016-11-21T13:37:55.275Z,
             owner: 1000,
-            mode: 33204
+            mode: 33204,
+            type: 'file',
         }]
     }
 });
@@ -75,7 +77,8 @@ readify('/', {type: 'raw', sort: 'size', order: 'desc'})
             size: 4735,
             date: 2016-11-21T13:37:55.275Z,
             owner: 1000,
-            mode: 33204
+            mode: 33204,
+            type: 'file',
         }]
     }
 });

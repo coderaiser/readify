@@ -1,7 +1,5 @@
 'use strict';
 
-const fs = require('fs');
-
 const test = require('tape');
 const sinon = require('sinon');
 const tryToCatch = require('try-to-catch');
@@ -11,47 +9,20 @@ const {reRequire} = mockRequire;
 
 const readify = require('..');
 
-test('path: wrong', async (t) => {
+test('readify: path: wrong', async (t) => {
     const [error] = await tryToCatch(readify, '/wrong/path');
     
     t.ok(error, error.message);
     t.end();
 });
 
-test('path: correct', async (t) => {
+test('readify: path: correct', async (t) => {
     const [error, json] = await tryToCatch(readify, '.');
     
     t.notOk(error, 'no error');
     t.ok(json, 'json');
     t.equal(typeof json.path, 'string');
     t.ok(Array.isArray(json.files));
-    t.end();
-});
-
-test('result: should be sorted by name folders then files', async (t) => {
-    const [, json] = await tryToCatch(readify, '.');
-    
-    const all = json.files;
-    const isDir = file => file.size === 'dir';
-    const not = (fn) => {
-        return (...args) => {
-            !fn(...args);
-        };
-    };
-    
-    const isFile = not(isDir);
-    
-    const files = all.filter(isFile);
-    const dirs = all.filter(isDir);
-    const names = dirs
-        .concat(files)
-        .map((file) => file.name);
-        
-    const sorted = names.sort((a, b) => {
-        return a > b ? 1 : -1;
-    });
-    
-    t.deepEqual(names, sorted);
     t.end();
 });
 
@@ -154,28 +125,23 @@ test('readify: result: raw', async (t) => {
 });
 
 test('readify: result: uid: 0', async(t) => {
-    const {readdir, stat} = fs;
-    
     const name = 'hello.txt';
     const mode = 16893;
     const size = 1024;
     const mtime = new Date();
-    const uid = 0;
+    const owner = 0;
+    const type = 'directory';
     
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
+    const readdir = async () => [{
+        name,
+        size,
+        date: mtime,
+        owner,
+        mode,
+        type,
+    }];
     
-    fs.stat = (name, fn) => {
-        fn(null, {
-            isDirectory: () => true,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
+    mockRequire('../lib/readdir', readdir);
     
     const date = shortdate(mtime, {
         order: 'little'
@@ -185,47 +151,41 @@ test('readify: result: uid: 0', async(t) => {
         path: './',
         files: [{
             name,
-            size: 'dir',
+            size: '1.00kb',
             date,
             owner: 'root',
-            mode: 'rwx rwx r-x'
+            mode: 'rwx rwx r-x',
+            type,
         }]
     };
     
-    reRequire('../lib/readdir');
     const readify = reRequire('..');
     const result = await readify('.');
     
-    fs.readdir = readdir;
-    fs.stat = stat;
+    mockRequire.stop('../lib/readdir');
     
     t.deepEqual(result, expected, 'should get raw values');
     t.end();
 });
 
 test('readify: result: nicki: no name found', async (t) => {
-    const {readdir, stat} = fs;
-    
     const name = 'hello.txt';
     const mode = 16893;
     const size = 1024;
     const mtime = new Date();
-    const uid = Math.random();
+    const owner = Math.random();
+    const type = 'file';
     
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
+    const readdir = async () => [{
+        name,
+        size,
+        date: mtime,
+        owner,
+        mode,
+        type,
+    }];
     
-    fs.stat = (name, fn) => {
-        fn(null, {
-            isDirectory: () => true,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
+    mockRequire('../lib/readdir', readdir);
     
     const date = shortdate(mtime, {
         order: 'little'
@@ -235,25 +195,24 @@ test('readify: result: nicki: no name found', async (t) => {
         path: './',
         files: [{
             name,
-            size: 'dir',
+            size: '1.00kb',
             date,
-            owner: uid,
+            owner,
             mode: 'rwx rwx r-x',
+            type: 'file',
         }]
     };
     
-    reRequire('../lib/readdir');
     const readify = reRequire('..');
     const result = await readify('.');
     
-    fs.readdir = readdir;
-    fs.stat = stat;
+    mockRequire.stop('../lib/readdir');
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
 });
 
-test('result: files should have fields name, size, date, owner, mode', async (t) => {
+test('result: files should have fields name, size, date, owner, mode, type', async (t) => {
     const json = await readify('.');
     const {
         files,
@@ -264,10 +223,10 @@ test('result: files should have fields name, size, date, owner, mode', async (t)
         .filter((file) =>
             Object
                 .keys(file)
-                .join(':') === 'name:size:date:owner:mode'
+                .join(':') === 'name:size:date:owner:mode:type'
         );
     
-    t.equal(fields.length, length, 'files array do not have fields: name, size, date, owner, mode');
+    t.equal(fields.length, length, 'files array do not have fields: name, size, date, owner, mode, type');
     t.end();
 });
 
@@ -320,28 +279,32 @@ test('readify: result: sort: size (with dir)', async (t) => {
         path: './',
         files: [{
             name: 'test',
-            size: 'dir',
+            size: '4kb',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
+            type: 'directory',
         }, {
             name: 'lib',
-            size: 'dir',
+            size: '4kb',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
+            type: 'directory',
         }, {
             name: 'readdir.js',
             size: '1.59kb',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
+            type: 'file',
         }, {
             name: 'readify.js',
             size: '3.46kb',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
+            type: 'file',
         }]
     };
     
@@ -351,25 +314,29 @@ test('readify: result: sort: size (with dir)', async (t) => {
         size: 3538,
         date,
         owner: 0,
-        mode: 33204
+        mode: 33204,
+        type: 'file',
     }, {
         name: 'test',
-        size: 'dir',
+        size: '4kb',
         date,
         owner: 0,
-        mode: 33204
+        mode: 33204,
+        type: 'directory',
     }, {
         name: 'readdir.js',
         size: 1629,
         date,
         owner: 0,
-        mode: 33204
+        mode: 33204,
+        type: 'file',
     }, {
         name: 'lib',
-        size: 'dir',
+        size: '4kb',
         date,
         owner: 0,
-        mode: 33204
+        mode: 33204,
+        type: 'directory',
     }];
      
     mockRequire('../lib/readdir', readdir);
