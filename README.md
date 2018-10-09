@@ -9,7 +9,7 @@
 [DependencyStatusURL]:      https://david-dm.org/coderaiser/readify "Dependency Status"
 [LicenseURL]:               https://tldrlegal.com/license/mit-license "MIT License"
 
-Read directory content with file attributes: size, date, owner, mode.
+Read directory content with file attributes: size, date, owner, mode and type.
 
 ## Install
 
