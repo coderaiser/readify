@@ -22,7 +22,7 @@
   "dependencies": {
     "@cloudcmd/formatify": "^1.0.0",
     "@cloudcmd/sortify": "^1.0.0",
-    "currify": "^2.0.0",
+    "currify": "^3.0.0",
     "es6-promisify": "^6.0.0",
     "execon": "^1.2.0",
     "format-io": "^1.0.1",
