@@ -6,14 +6,10 @@ const test = require('tape');
 const sinon = require('sinon');
 const tryToCatch = require('try-to-catch');
 const mockRequire = require('mock-require');
+const shortdate = require('shortdate');
 const {reRequire} = mockRequire;
 
-const exec = require('execon');
-const shortdate = require('shortdate');
-
 const readify = require('..');
-
-const noop = () => {};
 
 test('path: wrong', async (t) => {
     const [error] = await tryToCatch(readify, '/wrong/path');

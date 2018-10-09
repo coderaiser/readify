@@ -24,6 +24,39 @@ test('readdir: empty dir', async (t) => {
     t.end();
 });
 
+test('readdir: empty stat', async (t) => {
+    const readdirFS = fs.readdir;
+    const statFS = fs.stat;
+    
+    fs.readdir = (dir, cb) => {
+        cb(null, [
+            'hello',
+        ]);
+    }
+    
+    fs.stat = (name, cb) => {
+        cb(Error('some'));
+    };
+    
+    const readdir = reRequire('../lib/readdir');
+    
+    const [, result] = await tryToCatch(readdir, '/');
+    
+    fs.readdir = readdirFS;
+    fs.stat = statFS;
+    
+    const expected = [{
+        name: 'hello',
+        size: 0,
+        date: 0,
+        owner: 0,
+        mode: 0,
+    }];
+    
+    t.deepEqual(result, expected, 'should return empty array');
+    t.end();
+});
+
 test('readdir: result', async (t) => {
     const {
         readdir:readdirFS,
@@ -60,12 +93,13 @@ test('readdir: result', async (t) => {
     }];
     
     const readdir = reRequire('../lib/readdir');
-    const [, result] = await tryToCatch(readdir, '.');
+    const [e, result] = await tryToCatch(readdir, '.');
     
     fs.readdir = readdirFS;
     fs.stat = stat;
     
-    t.deepEqual(expected, result, 'should get raw values');
+    t.notOk(e, e && e.message || 'should not receive error');
+    t.deepEqual(result, expected, 'should get raw values');
     t.end();
 });
 
