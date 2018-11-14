@@ -278,14 +278,14 @@ test('readify: result: sort: size (with dir)', async (t) => {
     const expected = {
         path: './',
         files: [{
-            name: 'test',
+            name: 'lib',
             size: '4kb',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
             type: 'directory',
         }, {
-            name: 'lib',
+            name: 'test',
             size: '4kb',
             date: '12.01.2017',
             owner: 'root',
@@ -431,9 +431,9 @@ test('readify sort: size asc raw', async (t) => {
 test('readify: nicki: error ', async (t) => {
     const fn = sinon.stub();
     const e = Error('nicki error');
-    const nicki = (callback) => {
+    const nicki = async () => {
         fn(e);
-        callback(e);
+        throw e;
     };
     
     mockRequire('nicki', nicki);
@@ -441,6 +441,8 @@ test('readify: nicki: error ', async (t) => {
     const readify = reRequire('..');
     
     await readify(__dirname);
+    
+    mockRequire.stop('nicki');
     
     t.ok(fn.calledWith(e), 'should call callback when nicki has error');
     t.end();
