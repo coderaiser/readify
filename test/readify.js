@@ -278,14 +278,14 @@ test('readify: result: sort: size (with dir)', async (t) => {
     const expected = {
         path: './',
         files: [{
-            name: 'lib',
+            name: 'test',
             size: '4kb',
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
             type: 'directory',
         }, {
-            name: 'test',
+            name: 'lib',
             size: '4kb',
             date: '12.01.2017',
             owner: 'root',
