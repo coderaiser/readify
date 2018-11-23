@@ -47,6 +47,7 @@
     "node": ">=8.3.0"
   },
   "devDependencies": {
+    "@cloudcmd/stub": "^2.0.0",
     "coveralls": "^3.0.0",
     "eslint": "^5.0.0",
     "eslint-plugin-node": "^8.0.0",
@@ -54,7 +55,6 @@
     "nodemon": "^1.11.0",
     "nyc": "^13.0.1",
     "redrun": "^7.0.0",
-    "sinon": "^7.1.1",
     "tape": "^4.2.1"
   }
 }

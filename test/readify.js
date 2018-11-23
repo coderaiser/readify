@@ -1,7 +1,7 @@
 'use strict';
 
 const test = require('tape');
-const sinon = require('sinon');
+const stub = require('@cloudcmd/stub');
 const tryToCatch = require('try-to-catch');
 const mockRequire = require('mock-require');
 const shortdate = require('shortdate');
@@ -256,7 +256,7 @@ test('readify: nicki on win', async (t) => {
         value: 'win32'
     });
     
-    const nicki = sinon.spy();
+    const nicki = stub();
     
     mockRequire('nicki', nicki);
     
@@ -429,7 +429,7 @@ test('readify sort: size asc raw', async (t) => {
 });
 
 test('readify: nicki: error ', async (t) => {
-    const fn = sinon.stub();
+    const fn = stub();
     const e = Error('nicki error');
     const nicki = async () => {
         fn(e);
@@ -437,7 +437,6 @@ test('readify: nicki: error ', async (t) => {
     };
     
     mockRequire('nicki', nicki);
-    
     const readify = reRequire('..');
     
     await readify(__dirname);
