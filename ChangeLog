@@ -1,3 +1,9 @@
+2018.12.30, v6.0.4
+
+fix:
+- (tolerant-readdir) isSymbolicLink
+
+
 2018.12.30, v6.0.3
 
 fix:
