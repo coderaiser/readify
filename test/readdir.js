@@ -9,13 +9,13 @@ const tryToCatch = require('try-to-catch');
 const noop = () => {};
 
 test('readdir: empty dir', async (t) => {
-    mockRequire('fs-readdir-with-file-types', async () => []);
+    mockRequire('../lib/tolerant-readdir', async () => []);
     
     const readdir = reRequire('../lib/readdir');
     
     const [, result] = await tryToCatch(readdir, '.');
     
-    mockRequire.stop('fs-readdir-with-file-types');
+    mockRequire.stop('../lib/tolerant-readdir');
     t.deepEqual(result, [], 'should return empty array');
     t.end();
 });
@@ -27,7 +27,7 @@ test('readdir: empty stat', async (t) => {
         cb(Error('some'));
     };
     
-    mockRequire('fs-readdir-with-file-types', async () => [{
+    mockRequire('../lib/tolerant-readdir', async () => [{
         name: 'hello',
         isSymbolicLink: () => false,
     }]);
@@ -47,7 +47,7 @@ test('readdir: empty stat', async (t) => {
         type: 'file',
     }];
     
-    mockRequire.stop('fs-readdir-with-file-types');
+    mockRequire.stop('../lib/tolerant-readdir');
    
     t.deepEqual(result, expected, 'should return empty array');
     t.end();
@@ -79,7 +79,7 @@ test('readdir: result', async (t) => {
         });
     };
     
-    mockRequire('fs-readdir-with-file-types', async () => [{
+    mockRequire('../lib/tolerant-readdir', async () => [{
         name,
         isSymbolicLink: () => false,
     }]);
@@ -97,7 +97,7 @@ test('readdir: result', async (t) => {
     const [e, result] = await tryToCatch(readdir, '.');
     
     fs.stat = stat;
-    mockRequire.stop('fs-readdir-with-file-types');
+    mockRequire.stop('../lib/tolerant-readdir');
     
     t.notOk(e, e && e.message || 'should not receive error');
     t.deepEqual(result, expected, 'should get raw values');
@@ -130,7 +130,7 @@ test('readdir: result: directory link', async (t) => {
         });
     };
     
-    mockRequire('fs-readdir-with-file-types', async () => [{
+    mockRequire('../lib/tolerant-readdir', async () => [{
         name,
         isSymbolicLink: () => true,
     }]);
@@ -148,7 +148,7 @@ test('readdir: result: directory link', async (t) => {
     const [e, result] = await tryToCatch(readdir, '.');
     
     fs.stat = stat;
-    mockRequire.stop('fs-readdir-with-file-types');
+    mockRequire.stop('../lib/tolerant-readdir');
     
     t.notOk(e, e && e.message || 'should not receive error');
     t.deepEqual(result, expected, 'should get raw values');
