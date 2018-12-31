@@ -1,3 +1,9 @@
+2018.12.31, v6.1.0
+
+feature:
+- (package) rm: fs-readdir-with-file-types: 3 stat on every file -> 1 stat
+
+
 2018.12.30, v6.0.4
 
 fix:
