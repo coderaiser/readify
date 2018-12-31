@@ -1,6 +1,7 @@
 'use strict';
 
-const test = require('tape');
+const tryTo = require('try-to-tape');
+const test = tryTo(require('tape'));
 const stub = require('@cloudcmd/stub');
 const tryToCatch = require('try-to-catch');
 const mockRequire = require('mock-require');

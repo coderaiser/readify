@@ -1,42 +1,50 @@
 'use strict';
 
 const fs = require('fs');
-const test = require('tape');
-const mockRequire = require('mock-require');
-const {reRequire} = mockRequire;
+const {callbackify} = require('util');
+
+const stub = require('@cloudcmd/stub');
+const tryTo = require('try-to-tape');
+const test = tryTo(require('tape'));
+const {reRequire} = require('mock-require');
 const tryToCatch = require('try-to-catch');
 
 const noop = () => {};
 
 test('readdir: empty dir', async (t) => {
-    mockRequire('../lib/tolerant-readdir', async () => []);
+    const {readdir} = fs;
+    fs.readdir = callbackify(async () => []);
     
-    const readdir = reRequire('../lib/readdir');
+    const _readdir = reRequire('../lib/readdir');
     
-    const [, result] = await tryToCatch(readdir, '.');
+    const [, result] = await tryToCatch(_readdir, '.');
     
-    mockRequire.stop('../lib/tolerant-readdir');
+    fs.readdir = readdir;
+    
     t.deepEqual(result, [], 'should return empty array');
     t.end();
 });
 
 test('readdir: empty stat', async (t) => {
-    const statFS = fs.stat;
+    const {
+        lstat,
+        readdir,
+    } = fs;
     
-    fs.stat = (name, cb) => {
-        cb(Error('some'));
-    };
+    fs.lstat = callbackify(async () => {
+        throw Error('some');
+    });
     
-    mockRequire('../lib/tolerant-readdir', async () => [{
-        name: 'hello',
-        isSymbolicLink: () => false,
-    }]);
+    fs.readdir = callbackify(async () => [
+        'hello',
+    ]);
     
-    const readdir = reRequire('../lib/readdir');
+    const _readdir = reRequire('../lib/readdir');
     
-    const [, result] = await tryToCatch(readdir, '/');
+    const [, result] = await tryToCatch(_readdir, '/');
     
-    fs.stat = statFS;
+    fs.lstat = lstat;
+    fs.readdir = readdir;
     
     const expected = [{
         name: 'hello',
@@ -47,15 +55,14 @@ test('readdir: empty stat', async (t) => {
         type: 'file',
     }];
     
-    mockRequire.stop('../lib/tolerant-readdir');
-   
     t.deepEqual(result, expected, 'should return empty array');
     t.end();
 });
 
 test('readdir: result', async (t) => {
     const {
-        stat,
+        readdir,
+        lstat,
     } = fs;
     
     const name = 'hello.txt';
@@ -68,9 +75,10 @@ test('readdir: result', async (t) => {
         fn(null, [name]);
     };
     
-    fs.stat = (name, fn) => {
+    fs.lstat = (name, fn) => {
         fn(null, {
             isDirectory: noop,
+            isSymbolicLink: noop,
             name,
             mode,
             size,
@@ -78,11 +86,6 @@ test('readdir: result', async (t) => {
             uid
         });
     };
-    
-    mockRequire('../lib/tolerant-readdir', async () => [{
-        name,
-        isSymbolicLink: () => false,
-    }]);
     
     const expected = [{
         name,
@@ -93,20 +96,58 @@ test('readdir: result', async (t) => {
         type: 'file',
     }];
     
-    const readdir = reRequire('../lib/readdir');
-    const [e, result] = await tryToCatch(readdir, '.');
+    const _readdir = reRequire('../lib/readdir');
+    const [, result] = await tryToCatch(_readdir, '.');
     
-    fs.stat = stat;
-    mockRequire.stop('../lib/tolerant-readdir');
+    fs.lstat = lstat;
+    fs.readdir = readdir;
+    
+    t.deepEqual(result, expected, 'should get raw values');
+    t.end();
+});
+
+test('readdir: result: no error', async (t) => {
+    const {
+        readdir,
+        lstat,
+    } = fs;
+    
+    const name = 'hello.txt';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date();
+    const uid = 1000;
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.lstat = (name, fn) => {
+        fn(null, {
+            isDirectory: noop,
+            isSymbolicLink: noop,
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    const _readdir = reRequire('../lib/readdir');
+    const [e] = await tryToCatch(_readdir, '.');
+    
+    fs.lstat = lstat;
+    fs.readdir = readdir;
     
     t.notOk(e, e && e.message || 'should not receive error');
-    t.deepEqual(result, expected, 'should get raw values');
     t.end();
 });
 
 test('readdir: result: directory link', async (t) => {
     const {
-        stat,
+        lstat,
+        readdir,
     } = fs;
     
     const name = 'hello';
@@ -119,9 +160,10 @@ test('readdir: result: directory link', async (t) => {
         fn(null, [name]);
     };
     
-    fs.stat = (name, fn) => {
+    fs.lstat = (name, fn) => {
         fn(null, {
             isDirectory: () => true,
+            isSymbolicLink: () => true,
             name,
             mode,
             size,
@@ -129,11 +171,6 @@ test('readdir: result: directory link', async (t) => {
             uid
         });
     };
-    
-    mockRequire('../lib/tolerant-readdir', async () => [{
-        name,
-        isSymbolicLink: () => true,
-    }]);
     
     const expected = [{
         name,
@@ -144,13 +181,50 @@ test('readdir: result: directory link', async (t) => {
         type: 'directory-link',
     }];
     
-    const readdir = reRequire('../lib/readdir');
-    const [e, result] = await tryToCatch(readdir, '.');
+    const _readdir = reRequire('../lib/readdir');
+    const [, result] = await tryToCatch(_readdir, '.');
     
-    fs.stat = stat;
-    mockRequire.stop('../lib/tolerant-readdir');
+    fs.lstat = lstat;
+    fs.readdir = readdir;
+    
+    t.deepEqual(result, expected, 'should get raw values');
+    t.end();
+});
+
+test('readdir: result: directory link: no error', async (t) => {
+    const {
+        lstat,
+        readdir,
+    } = fs;
+    
+    const name = 'hello';
+    const mode = 16893;
+    const size = 1024;
+    const mtime = new Date();
+    const uid = 1000;
+    
+    fs.readdir = (dir, fn) => {
+        fn(null, [name]);
+    };
+    
+    fs.lstat = (name, fn) => {
+        fn(null, {
+            isDirectory: stub.returns(true),
+            isSymbolicLink: stub.returns(true),
+            name,
+            mode,
+            size,
+            mtime,
+            uid
+        });
+    };
+    
+    const _readdir = reRequire('../lib/readdir');
+    const [e] = await tryToCatch(_readdir, '.');
+    
+    fs.lstat = lstat;
+    fs.readdir = readdir;
     
     t.notOk(e, e && e.message || 'should not receive error');
-    t.deepEqual(result, expected, 'should get raw values');
     t.end();
 });

@@ -24,7 +24,6 @@
     "@cloudcmd/sortify": "^2.0.0",
     "currify": "^3.0.0",
     "format-io": "^1.0.1",
-    "fs-readdir-with-file-types": "^1.0.1",
     "nicki": "^4.0.0",
     "shortdate": "^1.2.0",
     "try-to-catch": "^1.0.2"
@@ -55,7 +54,8 @@
     "nodemon": "^1.11.0",
     "nyc": "^13.0.1",
     "redrun": "^7.0.0",
-    "tape": "^4.2.1"
+    "tape": "^4.2.1",
+    "try-to-tape": "^1.1.0"
   },
   "publishConfig": {
     "access": "public"
