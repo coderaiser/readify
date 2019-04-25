@@ -147,6 +147,7 @@ test('readdir: result: directory link', async (t) => {
     const {
         lstat,
         readdir,
+        realpath,
     } = fs;
     
     const name = 'hello';
@@ -159,15 +160,33 @@ test('readdir: result: directory link', async (t) => {
         fn(null, [name]);
     };
     
+    fs.realpath = (name, fn) => {
+        fn(null, name);
+    };
+    
+    const info = {
+        name,
+        mode,
+        size,
+        mtime,
+        uid,
+        ino: 1337,
+        dev: 1337,
+    };
+    
+    fs.stat = (name, fn) => {
+        fn(null, {
+            ...info,
+            isDirectory: () => true,
+            isSymbolicLink: () => false,
+        });
+    };
+    
     fs.lstat = (name, fn) => {
         fn(null, {
-            isDirectory: () => true,
+            ...info,
+            isDirectory: () => false,
             isSymbolicLink: () => true,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
         });
     };
     
@@ -185,6 +204,7 @@ test('readdir: result: directory link', async (t) => {
     
     fs.lstat = lstat;
     fs.readdir = readdir;
+    fs.realpath = realpath;
     
     t.deepEqual(result, expected, 'should get raw values');
     t.end();
