@@ -26,9 +26,7 @@ test('readdir: empty dir', async (t) => {
 });
 
 test('readdir: empty stat', async (t) => {
-    const {
-        readdir,
-    } = fs;
+    const {readdir} = fs;
     
     mockRequire('superstat', async () => {
         throw Error('some');
@@ -60,9 +58,7 @@ test('readdir: empty stat', async (t) => {
 });
 
 test('readdir: result', async (t) => {
-    const {
-        readdir
-    } = fs;
+    const {readdir} = fs;
     
     const name = 'hello.txt';
     const mode = 16893;
@@ -104,9 +100,7 @@ test('readdir: result', async (t) => {
 });
 
 test('readdir: result: no error', async (t) => {
-    const {
-        readdir,
-    } = fs;
+    const {readdir} = fs;
     
     const name = 'hello.txt';
     const mode = 16893;
@@ -139,9 +133,7 @@ test('readdir: result: no error', async (t) => {
 });
 
 test('readdir: result: directory link', async (t) => {
-    const {
-        readdir
-    } = fs;
+    const {readdir} = fs;
     
     const name = 'hello';
     const mode = 16893;
@@ -187,9 +179,7 @@ test('readdir: result: directory link', async (t) => {
 });
 
 test('readdir: result: directory link: no error', async (t) => {
-    const {
-        readdir,
-    } = fs;
+    const {readdir} = fs;
     
     const name = 'hello';
     const mode = 16893;
