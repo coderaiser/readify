@@ -9,15 +9,17 @@
     "url": "git://github.com/coderaiser/readify.git"
   },
   "scripts": {
-    "lint": "redrun lint:*",
-    "lint:eslint:lib": "eslint lib",
-    "lint:eslint:test": "eslint -c .eslintrc.test test --no-eslintrc",
-    "report": "nyc report --reporter=text-lcov | coveralls",
-    "coverage": "nyc npm test",
-    "test": "tape test/*.js",
-    "watch:coverage": "npm run watcher -- npm run coverage",
-    "watch:test": "npm run watcher -- npm test",
-    "watcher": "nodemon -w test -w lib --exec"
+    "putout": "madrun putout",
+    "lint": "madrun lint",
+    "fix:lint": "madrun fix:lint",
+    "lint:eslint:lib": "madrun lint:eslint:lib",
+    "lint:eslint:test": "madrun lint:eslint:test",
+    "report": "madrun report",
+    "coverage": "madrun coverage",
+    "test": "madrun test",
+    "watch:coverage": "madrun watch:coverage",
+    "watch:test": "madrun watch:test",
+    "watcher": "madrun watcher"
   },
   "dependencies": {
     "@cloudcmd/formatify": "^1.0.0",
@@ -50,12 +52,14 @@
     "coveralls": "^3.0.0",
     "eslint": "^5.0.0",
     "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-putout": "^1.4.4",
+    "madrun": "^2.1.2",
     "mock-require": "^3.0.2",
     "nodemon": "^1.11.0",
     "nyc": "^14.0.0",
+    "putout": "^4.23.0",
     "redrun": "^7.0.0",
-    "tape": "^4.2.1",
-    "try-to-tape": "^1.1.0"
+    "supertape": "^1.2.3"
   },
   "publishConfig": {
     "access": "public"

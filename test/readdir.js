@@ -4,8 +4,7 @@ const fs = require('fs');
 const {callbackify} = require('util');
 
 const stub = require('@cloudcmd/stub');
-const tryTo = require('try-to-tape');
-const test = tryTo(require('tape'));
+const test = require('supertape');
 const {reRequire} = require('mock-require');
 const tryToCatch = require('try-to-catch');
 

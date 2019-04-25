@@ -1,7 +1,6 @@
 'use strict';
 
-const tryTo = require('try-to-tape');
-const test = tryTo(require('tape'));
+const test = require('supertape');
 const stub = require('@cloudcmd/stub');
 const tryToCatch = require('try-to-catch');
 const mockRequire = require('mock-require');
@@ -67,12 +66,12 @@ test('readify: result: should sort by name', async (t) => {
         owner,
         mode: 33204
     }];
-     
+    
     mockRequire('../lib/readdir', readdir);
     
     const readify = reRequire('../lib/readify');
     const [, result] = await tryToCatch(readify, '.');
-     
+    
     mockRequire.stop('../lib/readdir');
     
     t.deepEqual(result, expected, 'should get values');
@@ -113,7 +112,7 @@ test('readify: result: raw', async (t) => {
         owner,
         mode: 33204
     }];
-     
+    
     mockRequire('../lib/readdir', readdir);
     const readify = reRequire('../lib/readify');
     
@@ -215,9 +214,7 @@ test('readify: result: nicki: no name found', async (t) => {
 
 test('result: files should have fields name, size, date, owner, mode, type', async (t) => {
     const json = await readify('.');
-    const {
-        files,
-    } = json;
+    const {files} = json;
     
     const {length} = files;
     const fields = files
@@ -233,7 +230,7 @@ test('result: files should have fields name, size, date, owner, mode, type', asy
 
 test('result: file names should not be empty', async (t) => {
     const [e, json] = await tryToCatch(readify, '.');
-    const files = json.files;
+    const {files} = json;
     const check = () =>
         files.filter((file) =>
             !file.name
@@ -339,7 +336,7 @@ test('readify: result: sort: size (with dir)', async (t) => {
         mode: 33204,
         type: 'directory',
     }];
-     
+    
     mockRequire('../lib/readdir', readdir);
     const readify = reRequire('../lib/readify');
     
