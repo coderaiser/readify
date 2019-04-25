@@ -8,6 +8,12 @@
     "type": "git",
     "url": "git://github.com/coderaiser/readify.git"
   },
+  "nyc": {
+    "exclude": [
+      "madrun.js",
+      "test"
+    ]
+  },
   "scripts": {
     "putout": "madrun putout",
     "lint": "madrun lint",
