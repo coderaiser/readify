@@ -28,6 +28,7 @@
     "format-io": "^1.0.1",
     "nicki": "^4.0.0",
     "shortdate": "^1.2.0",
+    "superstat": "^1.0.0",
     "try-to-catch": "^1.0.2"
   },
   "keywords": [

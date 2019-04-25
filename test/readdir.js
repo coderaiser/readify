@@ -5,7 +5,8 @@ const {callbackify} = require('util');
 
 const stub = require('@cloudcmd/stub');
 const test = require('supertape');
-const {reRequire} = require('mock-require');
+const mockRequire = require('mock-require');
+const {reRequire, stopAll} = mockRequire;
 const tryToCatch = require('try-to-catch');
 
 const noop = () => {};
@@ -26,11 +27,10 @@ test('readdir: empty dir', async (t) => {
 
 test('readdir: empty stat', async (t) => {
     const {
-        lstat,
         readdir,
     } = fs;
     
-    fs.lstat = callbackify(async () => {
+    mockRequire('superstat', async () => {
         throw Error('some');
     });
     
@@ -42,7 +42,6 @@ test('readdir: empty stat', async (t) => {
     
     const [, result] = await tryToCatch(_readdir, '/');
     
-    fs.lstat = lstat;
     fs.readdir = readdir;
     
     const expected = [{
@@ -54,14 +53,15 @@ test('readdir: empty stat', async (t) => {
         type: 'file',
     }];
     
+    stopAll();
+    
     t.deepEqual(result, expected, 'should return empty array');
     t.end();
 });
 
 test('readdir: result', async (t) => {
     const {
-        readdir,
-        lstat,
+        readdir
     } = fs;
     
     const name = 'hello.txt';
@@ -74,17 +74,15 @@ test('readdir: result', async (t) => {
         fn(null, [name]);
     };
     
-    fs.lstat = (name, fn) => {
-        fn(null, {
-            isDirectory: noop,
-            isSymbolicLink: noop,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
+    mockRequire('superstat', async () => ({
+        isDirectory: noop,
+        isSymbolicLink: noop,
+        name,
+        mode,
+        size,
+        mtime,
+        uid
+    }));
     
     const expected = [{
         name,
@@ -98,8 +96,8 @@ test('readdir: result', async (t) => {
     const _readdir = reRequire('../lib/readdir');
     const [, result] = await tryToCatch(_readdir, '.');
     
-    fs.lstat = lstat;
     fs.readdir = readdir;
+    stopAll();
     
     t.deepEqual(result, expected, 'should get raw values');
     t.end();
@@ -108,7 +106,6 @@ test('readdir: result', async (t) => {
 test('readdir: result: no error', async (t) => {
     const {
         readdir,
-        lstat,
     } = fs;
     
     const name = 'hello.txt';
@@ -121,22 +118,20 @@ test('readdir: result: no error', async (t) => {
         fn(null, [name]);
     };
     
-    fs.lstat = (name, fn) => {
-        fn(null, {
-            isDirectory: noop,
-            isSymbolicLink: noop,
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
+    mockRequire('superstat', async () => ({
+        isDirectory: noop,
+        isSymbolicLink: noop,
+        name,
+        mode,
+        size,
+        mtime,
+        uid,
+    }));
     
     const _readdir = reRequire('../lib/readdir');
     const [e] = await tryToCatch(_readdir, '.');
     
-    fs.lstat = lstat;
+    stopAll();
     fs.readdir = readdir;
     
     t.notOk(e, e && e.message || 'should not receive error');
@@ -145,9 +140,7 @@ test('readdir: result: no error', async (t) => {
 
 test('readdir: result: directory link', async (t) => {
     const {
-        lstat,
-        readdir,
-        realpath,
+        readdir
     } = fs;
     
     const name = 'hello';
@@ -160,11 +153,9 @@ test('readdir: result: directory link', async (t) => {
         fn(null, [name]);
     };
     
-    fs.realpath = (name, fn) => {
-        fn(null, name);
-    };
-    
     const info = {
+        isDirectory: stub().returns(true),
+        isSymbolicLink: stub().returns(true),
         name,
         mode,
         size,
@@ -174,21 +165,7 @@ test('readdir: result: directory link', async (t) => {
         dev: 1337,
     };
     
-    fs.stat = (name, fn) => {
-        fn(null, {
-            ...info,
-            isDirectory: () => true,
-            isSymbolicLink: () => false,
-        });
-    };
-    
-    fs.lstat = (name, fn) => {
-        fn(null, {
-            ...info,
-            isDirectory: () => false,
-            isSymbolicLink: () => true,
-        });
-    };
+    mockRequire('superstat', async () => info);
     
     const expected = [{
         name,
@@ -202,9 +179,8 @@ test('readdir: result: directory link', async (t) => {
     const _readdir = reRequire('../lib/readdir');
     const [, result] = await tryToCatch(_readdir, '.');
     
-    fs.lstat = lstat;
     fs.readdir = readdir;
-    fs.realpath = realpath;
+    stopAll();
     
     t.deepEqual(result, expected, 'should get raw values');
     t.end();
@@ -212,7 +188,6 @@ test('readdir: result: directory link', async (t) => {
 
 test('readdir: result: directory link: no error', async (t) => {
     const {
-        lstat,
         readdir,
     } = fs;
     
@@ -226,24 +201,23 @@ test('readdir: result: directory link: no error', async (t) => {
         fn(null, [name]);
     };
     
-    fs.lstat = (name, fn) => {
-        fn(null, {
-            isDirectory: stub.returns(true),
-            isSymbolicLink: stub.returns(true),
-            name,
-            mode,
-            size,
-            mtime,
-            uid
-        });
-    };
+    mockRequire('superstat', async () => ({
+        isDirectory: stub.returns(true),
+        isSymbolicLink: stub.returns(true),
+        name,
+        mode,
+        size,
+        mtime,
+        uid,
+    }));
     
     const _readdir = reRequire('../lib/readdir');
     const [e] = await tryToCatch(_readdir, '.');
     
-    fs.lstat = lstat;
+    stopAll();
     fs.readdir = readdir;
     
     t.notOk(e, e && e.message || 'should not receive error');
     t.end();
 });
+
