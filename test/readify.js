@@ -446,61 +446,60 @@ test('readify: nicki: error ', async (t) => {
 });
 
 test('readify: nicki on android', async (t) => {
-  Object.defineProperty(process, 'platform', {
-      value: 'android'
-  });
-
-  const fn = stub();
-  const e = Error('nicki error');
-  const nicki = async () => {
-      fn(e);
-      throw e;
-  };
-
-  mockRequire('nicki', nicki);
-
-  const date = new Date('2017-01-12T09:01:35.288Z');
-  const expectedDirs = [{
-    name: 'lib',
-    size: '4kb',
-    date,
-    owner: 0,
-    mode: 33204,
-    type: 'directory',
-  }, {
-    name: 'test',
-    size: '4kb',
-    date,
-    owner: 0,
-    mode: 33204,
-    type: 'directory',
-  }, {
-    name: 'readdir.js',
-    size: 1629,
-    date,
-    owner: 0,
-    mode: 33204,
-    type: 'file',
-  }, {
-    name: 'readify.js',
-    size: 3538,
-    date,
-    owner: 0,
-    mode: 33204,
-    type: 'file',
-  }]
-  const readdir = async () => expectedDirs;
-
-  mockRequire('../lib/readdir', readdir);
-  const readify = reRequire('../lib/readify');
-  const result = await readify('.');
-
-  mockRequire.stop('../lib/readdir');
-  mockRequire.stop('nicki');
-
-  t.ok(result.files, 'should have files');
-  t.equal(expectedDirs.length, result.files.length, 'should same result length');
-  t.end();
+    Object.defineProperty(process, 'platform', {
+        value: 'android'
+    });
+    
+    const fn = stub();
+    const e = Error('nicki error');
+    const nicki = async () => {
+        fn(e);
+        throw e;
+    };
+    
+    mockRequire('nicki', nicki);
+    
+    const date = new Date('2017-01-12T09:01:35.288Z');
+    const expectedDirs = [{
+        name: 'lib',
+        size: '4kb',
+        date,
+        owner: 0,
+        mode: 33204,
+        type: 'directory',
+    }, {
+        name: 'test',
+        size: '4kb',
+        date,
+        owner: 0,
+        mode: 33204,
+        type: 'directory',
+    }, {
+        name: 'readdir.js',
+        size: 1629,
+        date,
+        owner: 0,
+        mode: 33204,
+        type: 'file',
+    }, {
+        name: 'readify.js',
+        size: 3538,
+        date,
+        owner: 0,
+        mode: 33204,
+        type: 'file',
+    }]
+    const readdir = async () => expectedDirs;
+    
+    mockRequire('../lib/readdir', readdir);
+    const readify = reRequire('../lib/readify');
+    const result = await readify('.');
+    
+    mockRequire.stop('../lib/readdir');
+    mockRequire.stop('nicki');
+    
+    t.ok(result.files, 'should have files');
+    t.equal(expectedDirs.length, result.files.length, 'should same result length');
+    t.end();
 });
-
 
