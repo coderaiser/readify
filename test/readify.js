@@ -48,7 +48,7 @@ test('readify: result: should sort by name', async (t) => {
             date: '12.01.2017',
             owner: 'root',
             mode: 'rw- rw- r--',
-        }]
+        }],
     };
     
     const date = new Date('2017-01-12T08:31:58.308Z');
@@ -58,13 +58,13 @@ test('readify: result: should sort by name', async (t) => {
         size: 1629,
         date,
         owner,
-        mode: 33204
+        mode: 33204,
     }, {
         name: '.readify.js',
         size: 3538,
         date,
         owner,
-        mode: 33204
+        mode: 33204,
     }];
     
     mockRequire('../lib/readdir', readdir);
@@ -89,14 +89,14 @@ test('readify: result: raw', async (t) => {
             size: 1629,
             date,
             owner,
-            mode: 33204
+            mode: 33204,
         }, {
             name: 'readify.js',
             size: 3538,
             date,
             owner,
-            mode: 33204
-        }]
+            mode: 33204,
+        }],
     };
     
     const readdir = async () => [{
@@ -104,13 +104,13 @@ test('readify: result: raw', async (t) => {
         size: 1629,
         date,
         owner,
-        mode: 33204
+        mode: 33204,
     }, {
         name: 'readify.js',
         size: 3538,
         date,
         owner,
-        mode: 33204
+        mode: 33204,
     }];
     
     mockRequire('../lib/readdir', readdir);
@@ -144,7 +144,7 @@ test('readify: result: uid: 0', async(t) => {
     mockRequire('../lib/readdir', readdir);
     
     const date = shortdate(mtime, {
-        order: 'little'
+        order: 'little',
     });
     
     const expected = {
@@ -156,7 +156,7 @@ test('readify: result: uid: 0', async(t) => {
             owner: 'root',
             mode: 'rwx rwx r-x',
             type,
-        }]
+        }],
     };
     
     const readify = reRequire('..');
@@ -188,7 +188,7 @@ test('readify: result: nicki: no name found', async (t) => {
     mockRequire('../lib/readdir', readdir);
     
     const date = shortdate(mtime, {
-        order: 'little'
+        order: 'little',
     });
     
     const expected = {
@@ -200,7 +200,7 @@ test('readify: result: nicki: no name found', async (t) => {
             owner,
             mode: 'rwx rwx r-x',
             type: 'file',
-        }]
+        }],
     };
     
     const readify = reRequire('..');
@@ -218,11 +218,9 @@ test('result: files should have fields name, size, date, owner, mode, type', asy
     
     const {length} = files;
     const fields = files
-        .filter((file) =>
-            Object
-                .keys(file)
-                .join(':') === 'name:size:date:owner:mode:type'
-        );
+        .filter((file) => Object
+            .keys(file)
+            .join(':') === 'name:size:date:owner:mode:type');
     
     t.equal(fields.length, length, 'files array do not have fields: name, size, date, owner, mode, type');
     t.end();
@@ -231,12 +229,9 @@ test('result: files should have fields name, size, date, owner, mode, type', asy
 test('result: file names should not be empty', async (t) => {
     const [e, json] = await tryToCatch(readify, '.');
     const {files} = json;
-    const check = () =>
-        files.filter((file) =>
-            !file.name
-        ).forEach(file => {
-            throw Error('Filename should not be empty!\n' + JSON.stringify(file));
-        });
+    const check = () => files.filter((file) => !file.name).forEach((file) => {
+        throw Error('Filename should not be empty!\n' + JSON.stringify(file));
+    });
     
     t.notOk(e, 'no error');
     t.doesNotThrow(check, 'should not throw');
@@ -251,7 +246,7 @@ test('arguments: exception when no path', async (t) => {
 
 test('readify: nicki on win', async (t) => {
     Object.defineProperty(process, 'platform', {
-        value: 'win32'
+        value: 'win32',
     });
     
     const nicki = stub();
@@ -263,7 +258,7 @@ test('readify: nicki on win', async (t) => {
     await readify(__dirname);
     
     Object.defineProperty(process, 'platform', {
-        value: 'linux'
+        value: 'linux',
     });
     
     mockRequire.stop('nicki');
@@ -303,7 +298,7 @@ test('readify: result: sort: size (with dir)', async (t) => {
             owner: 'root',
             mode: 'rw- rw- r--',
             type: 'file',
-        }]
+        }],
     };
     
     const date = new Date('2017-01-12T09:01:35.288Z');
@@ -402,7 +397,7 @@ test('readify sort: size asc', async (t) => {
     const expected = [
         '3.txt',
         '1.txt',
-        '2.txt'
+        '2.txt',
     ];
     
     const {files} = await readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'});
@@ -484,7 +479,7 @@ test('readify: nicki on android', async (t) => {
         owner: 0,
         mode: 33204,
         type: 'file',
-    }]
+    }];
     
     const readdir = async () => files;
     

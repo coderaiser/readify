@@ -1,15 +1,13 @@
 {
-    "env": {
-        "node": true
-    },
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
     "rules": {
-        "indent": ["error", 4]
+        "require-atomic-updates": "off"
     },
     "extends": [
-        "eslint:recommended"
+        "plugin:putout/recommended",
+        "plugin:node/recommended"
+    ],
+    "plugins": [
+        "putout",
+        "node"
     ]
 }

@@ -77,7 +77,7 @@ test('readdir: result', async (t) => {
         mode,
         size,
         mtime,
-        uid
+        uid,
     }));
     
     const expected = [{
