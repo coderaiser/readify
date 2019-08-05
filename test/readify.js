@@ -213,8 +213,7 @@ test('readify: result: nicki: no name found', async (t) => {
 });
 
 test('result: files should have fields name, size, date, owner, mode, type', async (t) => {
-    const json = await readify('.');
-    const {files} = json;
+    const {files} = await readify('.');
     
     const {length} = files;
     const fields = files
