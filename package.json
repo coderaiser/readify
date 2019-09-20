@@ -30,7 +30,7 @@
   "dependencies": {
     "@cloudcmd/formatify": "^1.0.0",
     "@cloudcmd/sortify": "^2.0.0",
-    "currify": "^3.0.0",
+    "currify": "^4.0.0",
     "format-io": "^1.0.1",
     "nicki": "^4.0.0",
     "shortdate": "^1.2.0",
