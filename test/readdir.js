@@ -1,7 +1,6 @@
 'use strict';
 
 const fs = require('fs');
-const {callbackify} = require('util');
 
 const stub = require('@cloudcmd/stub');
 const test = require('supertape');
@@ -12,35 +11,35 @@ const tryToCatch = require('try-to-catch');
 const noop = () => {};
 
 test('readdir: empty dir', async (t) => {
-    const {readdir} = fs;
-    fs.readdir = callbackify(async () => []);
+    const {readdir} = fs.promises;
+    fs.promises.readdir = async () => [];
     
     const _readdir = reRequire('../lib/readdir');
     
     const [, result] = await tryToCatch(_readdir, '.');
     
-    fs.readdir = readdir;
+    fs.promises.readdir = readdir;
     
     t.deepEqual(result, [], 'should return empty array');
     t.end();
 });
 
 test('readdir: empty stat', async (t) => {
-    const {readdir} = fs;
+    const {readdir} = fs.promises;
     
     mockRequire('superstat', async () => {
         throw Error('some');
     });
     
-    fs.readdir = callbackify(async () => [
+    fs.promises.readdir = async () => [
         'hello',
-    ]);
+    ];
     
     const _readdir = reRequire('../lib/readdir');
     
     const [, result] = await tryToCatch(_readdir, '/');
     
-    fs.readdir = readdir;
+    fs.promises.readdir = readdir;
     
     const expected = [{
         name: 'hello',
@@ -58,7 +57,7 @@ test('readdir: empty stat', async (t) => {
 });
 
 test('readdir: result', async (t) => {
-    const {readdir} = fs;
+    const {readdir} = fs.promises;
     
     const name = 'hello.txt';
     const mode = 16893;
@@ -66,9 +65,7 @@ test('readdir: result', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
+    fs.promises.readdir = async () => [name];
     
     mockRequire('superstat', async () => ({
         isDirectory: noop,
@@ -92,7 +89,7 @@ test('readdir: result', async (t) => {
     const _readdir = reRequire('../lib/readdir');
     const [, result] = await tryToCatch(_readdir, '.');
     
-    fs.readdir = readdir;
+    fs.promises.readdir = readdir;
     stopAll();
     
     t.deepEqual(result, expected, 'should get raw values');
@@ -100,7 +97,7 @@ test('readdir: result', async (t) => {
 });
 
 test('readdir: result: no error', async (t) => {
-    const {readdir} = fs;
+    const {readdir} = fs.promises;
     
     const name = 'hello.txt';
     const mode = 16893;
@@ -108,9 +105,7 @@ test('readdir: result: no error', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
+    fs.promises.readdir = () => [name];
     
     mockRequire('superstat', async () => ({
         isDirectory: noop,
@@ -126,14 +121,14 @@ test('readdir: result: no error', async (t) => {
     const [e] = await tryToCatch(_readdir, '.');
     
     stopAll();
-    fs.readdir = readdir;
+    fs.promises.readdir = readdir;
     
     t.notOk(e, e && e.message || 'should not receive error');
     t.end();
 });
 
 test('readdir: result: directory link', async (t) => {
-    const {readdir} = fs;
+    const {readdir} = fs.promises;
     
     const name = 'hello';
     const mode = 16893;
@@ -141,9 +136,7 @@ test('readdir: result: directory link', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
+    fs.promises.readdir = () => [name];
     
     const info = {
         isDirectory: stub().returns(true),
@@ -171,7 +164,7 @@ test('readdir: result: directory link', async (t) => {
     const _readdir = reRequire('../lib/readdir');
     const [, result] = await tryToCatch(_readdir, '.');
     
-    fs.readdir = readdir;
+    fs.promises.readdir = readdir;
     stopAll();
     
     t.deepEqual(result, expected, 'should get raw values');
@@ -179,7 +172,7 @@ test('readdir: result: directory link', async (t) => {
 });
 
 test('readdir: result: directory link: no error', async (t) => {
-    const {readdir} = fs;
+    const {readdir} = fs.promises;
     
     const name = 'hello';
     const mode = 16893;
@@ -187,9 +180,7 @@ test('readdir: result: directory link: no error', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    fs.readdir = (dir, fn) => {
-        fn(null, [name]);
-    };
+    fs.promises.readdir = () => [name];
     
     mockRequire('superstat', async () => ({
         isDirectory: stub.returns(true),
@@ -205,7 +196,7 @@ test('readdir: result: directory link: no error', async (t) => {
     const [e] = await tryToCatch(_readdir, '.');
     
     stopAll();
-    fs.readdir = readdir;
+    fs.promises.readdir = readdir;
     
     t.notOk(e, e && e.message || 'should not receive error');
     t.end();

@@ -15,11 +15,8 @@
     ]
   },
   "scripts": {
-    "putout": "madrun putout",
     "lint": "madrun lint",
     "fix:lint": "madrun fix:lint",
-    "lint:eslint:lib": "madrun lint:eslint:lib",
-    "lint:eslint:test": "madrun lint:eslint:test",
     "report": "madrun report",
     "coverage": "madrun coverage",
     "test": "madrun test",
@@ -52,7 +49,7 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "engines": {
-    "node": ">=8.3.0"
+    "node": ">=10"
   },
   "devDependencies": {
     "@cloudcmd/stub": "^2.0.0",
