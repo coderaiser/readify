@@ -29,7 +29,7 @@
     "@cloudcmd/sortify": "^2.0.0",
     "currify": "^4.0.0",
     "format-io": "^2.0.0",
-    "nicki": "^4.0.0",
+    "nicki": "^5.0.0",
     "shortdate": "^2.0.0",
     "superstat": "^1.0.0",
     "try-to-catch": "^2.0.0"
