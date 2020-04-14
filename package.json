@@ -31,7 +31,7 @@
     "format-io": "^2.0.0",
     "nicki": "^5.0.0",
     "shortdate": "^2.0.0",
-    "superstat": "^1.0.0",
+    "superstat": "^2.0.0",
     "try-to-catch": "^3.0.0"
   },
   "keywords": [

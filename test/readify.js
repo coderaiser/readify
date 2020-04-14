@@ -384,9 +384,10 @@ test('readify: sort: name: desc', async (t) => {
     const sort = 'name';
     const order = 'desc';
     
+    const getName = ({name}) => name;
+    
     const data = await readify('./test/fixture/attr_sort', {sort, order});
-    data.files = data.files
-        .map((file) => file.name);
+    data.files = data.files.map(getName);
     
     t.deepEqual(data.files, files, 'should equal');
     t.end();
