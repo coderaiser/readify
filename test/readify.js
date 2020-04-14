@@ -124,7 +124,7 @@ test('readify: result: raw', async (t) => {
     t.end();
 });
 
-test('readify: result: uid: 0', async(t) => {
+test('readify: result: uid: 0', async (t) => {
     const name = 'hello.txt';
     const mode = 16893;
     const size = 1024;
