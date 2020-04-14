@@ -10,7 +10,7 @@
   },
   "nyc": {
     "exclude": [
-      "madrun.js",
+      ".madrun.js",
       "test"
     ]
   },
