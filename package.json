@@ -61,7 +61,7 @@
     "mock-require": "^3.0.2",
     "nodemon": "^2.0.1",
     "nyc": "^15.0.0",
-    "putout": "^8.0.0",
+    "putout": "^9.1.0",
     "supertape": "^2.0.1"
   },
   "publishConfig": {
