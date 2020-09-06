@@ -58,13 +58,13 @@ test('readify: result: should sort by name', async (t) => {
         size: 1629,
         date,
         owner,
-        mode: 33204,
+        mode: 33_204,
     }, {
         name: '.readify.js',
         size: 3538,
         date,
         owner,
-        mode: 33204,
+        mode: 33_204,
     }];
     
     mockRequire('../lib/readdir', readdir);
@@ -89,13 +89,13 @@ test('readify: result: raw', async (t) => {
             size: 1629,
             date,
             owner,
-            mode: 33204,
+            mode: 33_204,
         }, {
             name: 'readify.js',
             size: 3538,
             date,
             owner,
-            mode: 33204,
+            mode: 33_204,
         }],
     };
     
@@ -104,13 +104,13 @@ test('readify: result: raw', async (t) => {
         size: 1629,
         date,
         owner,
-        mode: 33204,
+        mode: 33_204,
     }, {
         name: 'readify.js',
         size: 3538,
         date,
         owner,
-        mode: 33204,
+        mode: 33_204,
     }];
     
     mockRequire('../lib/readdir', readdir);
@@ -126,7 +126,7 @@ test('readify: result: raw', async (t) => {
 
 test('readify: result: uid: 0', async (t) => {
     const name = 'hello.txt';
-    const mode = 16893;
+    const mode = 16_893;
     const size = 1024;
     const mtime = new Date();
     const owner = 0;
@@ -170,7 +170,7 @@ test('readify: result: uid: 0', async (t) => {
 
 test('readify: result: nicki: no name found', async (t) => {
     const name = 'hello.txt';
-    const mode = 16893;
+    const mode = 16_893;
     const size = 1024;
     const mtime = new Date();
     const owner = Math.random();
@@ -306,28 +306,28 @@ test('readify: result: sort: size (with dir)', async (t) => {
         size: 3538,
         date,
         owner: 0,
-        mode: 33204,
+        mode: 33_204,
         type: 'file',
     }, {
         name: 'test',
         size: '4kb',
         date,
         owner: 0,
-        mode: 33204,
+        mode: 33_204,
         type: 'directory',
     }, {
         name: 'readdir.js',
         size: 1629,
         date,
         owner: 0,
-        mode: 33204,
+        mode: 33_204,
         type: 'file',
     }, {
         name: 'lib',
         size: '4kb',
         date,
         owner: 0,
-        mode: 33204,
+        mode: 33_204,
         type: 'directory',
     }];
     
@@ -456,28 +456,28 @@ test('readify: nicki on android', async (t) => {
         size: '4kb',
         date,
         owner: 0,
-        mode: 33204,
+        mode: 33_204,
         type: 'directory',
     }, {
         name: 'test',
         size: '4kb',
         date,
         owner: 0,
-        mode: 33204,
+        mode: 33_204,
         type: 'directory',
     }, {
         name: 'readdir.js',
         size: 1629,
         date,
         owner: 0,
-        mode: 33204,
+        mode: 33_204,
         type: 'file',
     }, {
         name: 'readify.js',
         size: 3538,
         date,
         owner: 0,
-        mode: 33204,
+        mode: 33_204,
         type: 'file',
     }];
     

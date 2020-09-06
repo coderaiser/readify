@@ -60,7 +60,7 @@ test('readdir: result', async (t) => {
     const {readdir} = fs.promises;
     
     const name = 'hello.txt';
-    const mode = 16893;
+    const mode = 16_893;
     const size = 1024;
     const mtime = new Date();
     const uid = 1000;
@@ -100,7 +100,7 @@ test('readdir: result: no error', async (t) => {
     const {readdir} = fs.promises;
     
     const name = 'hello.txt';
-    const mode = 16893;
+    const mode = 16_893;
     const size = 1024;
     const mtime = new Date();
     const uid = 1000;
@@ -131,7 +131,7 @@ test('readdir: result: directory link', async (t) => {
     const {readdir} = fs.promises;
     
     const name = 'hello';
-    const mode = 16893;
+    const mode = 16_893;
     const size = 1024;
     const mtime = new Date();
     const uid = 1000;
@@ -175,7 +175,7 @@ test('readdir: result: directory link: no error', async (t) => {
     const {readdir} = fs.promises;
     
     const name = 'hello';
-    const mode = 16893;
+    const mode = 16_893;
     const size = 1024;
     const mtime = new Date();
     const uid = 1000;
