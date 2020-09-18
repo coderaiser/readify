@@ -6,4 +6,5 @@ yarn-error.log
 
 .nyc_output
 *.swp
+.putoutcache
 
