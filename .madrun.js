@@ -2,8 +2,6 @@
 
 const {run} = require('madrun');
 
-const a = 1_1;
-
 module.exports = {
     'lint': () => 'putout lib test .madrun.js',
     'fix:lint': () => run('lint', '--fix'),
