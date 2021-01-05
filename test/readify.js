@@ -3,6 +3,7 @@
 const test = require('supertape');
 const stub = require('@cloudcmd/stub');
 const tryToCatch = require('try-to-catch');
+const tryCatch = require('try-catch');
 const mockRequire = require('mock-require');
 const shortdate = require('shortdate');
 const {reRequire} = mockRequire;
@@ -232,13 +233,17 @@ test('result: file names should not be empty', async (t) => {
         throw Error('Filename should not be empty!\n' + JSON.stringify(file));
     });
     
+    const [isThrow] = tryCatch(check);
+    
     t.notOk(e, 'no error');
-    t.doesNotThrow(check, 'should not throw');
+    t.notOk(isThrow, 'should not throw');
+    
     t.end();
 });
 
 test('arguments: exception when no path', async (t) => {
     const [e] = await tryToCatch(readify);
+    
     t.equal(e.message, 'path should be string!', 'should throw when no path');
     t.end();
 });

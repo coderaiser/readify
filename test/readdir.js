@@ -123,7 +123,7 @@ test('readdir: result: no error', async (t) => {
     stopAll();
     fs.promises.readdir = readdir;
     
-    t.notOk(e, e && e.message || 'should not receive error');
+    t.notOk(e, e?.message || 'should not receive error');
     t.end();
 });
 
@@ -198,7 +198,7 @@ test('readdir: result: directory link: no error', async (t) => {
     stopAll();
     fs.promises.readdir = readdir;
     
-    t.notOk(e, e && e.message || 'should not receive error');
+    t.notOk(e, e?.message || 'should not receive error');
     t.end();
 });
 

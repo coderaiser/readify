@@ -8,12 +8,6 @@
     "type": "git",
     "url": "git://github.com/coderaiser/readify.git"
   },
-  "nyc": {
-    "exclude": [
-      ".madrun.js",
-      "test"
-    ]
-  },
   "scripts": {
     "lint": "madrun lint",
     "fix:lint": "madrun fix:lint",
@@ -62,7 +56,8 @@
     "nodemon": "^2.0.1",
     "nyc": "^15.0.0",
     "putout": "^13.1.2",
-    "supertape": "^4.4.0"
+    "supertape": "^4.4.0",
+    "try-catch": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"

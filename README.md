@@ -40,7 +40,7 @@ console.log(data);
 // output
 ({
     path: '/',
-    files:  [{
+    files: [{
         name: 'readify.js',
         size: '4.22kb',
         date: '20.02.2016',
@@ -54,7 +54,7 @@ readify('/', {type: 'raw'}).then(console.log);
 // output
 ({
     path: '/',
-    files:  [{
+    files: [{
         name: 'readify.js',
         size: 4735,
         date: '2016-11-21T13:37:55.275Z',
@@ -68,7 +68,7 @@ readify('/', {type: 'raw', sort: 'size', order: 'desc'}).then(console.log);
 // output
 ({
     path: '/',
-    files:  [{
+    files: [{
         name: 'readify.js',
         size: 4735,
         date: '2016-11-21T13:37:55.275Z',
