@@ -3,7 +3,6 @@
 const test = require('supertape');
 const stub = require('@cloudcmd/stub');
 const tryToCatch = require('try-to-catch');
-const tryCatch = require('try-catch');
 const mockRequire = require('mock-require');
 const shortdate = require('shortdate');
 const {reRequire} = mockRequire;
@@ -227,17 +226,13 @@ test('result: files should have fields name, size, date, owner, mode, type', asy
 });
 
 test('result: file names should not be empty', async (t) => {
-    const [e, json] = await tryToCatch(readify, '.');
+    const [, json] = await tryToCatch(readify, '.');
     const {files} = json;
-    const check = () => files.filter((file) => !file.name).forEach((file) => {
-        throw Error('Filename should not be empty!\n' + JSON.stringify(file));
-    });
     
-    const [isThrow] = tryCatch(check);
+    const noFileName = ({name}) => !name;
+    const result = files.filter(noFileName);
     
-    t.notOk(e, 'no error');
-    t.notOk(isThrow, 'should not throw');
-    
+    t.deepEqual(result, []);
     t.end();
 });
 
@@ -408,7 +403,7 @@ test('readify sort: size asc', async (t) => {
     const {files} = await readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'});
     const sorted = files.map((file) => file.name);
     
-    t.deepEqual(expected, sorted, 'correct order');
+    t.deepEqual(sorted, expected, 'correct order');
     t.end();
 });
 
@@ -441,7 +436,7 @@ test('readify: nicki: error ', async (t) => {
     
     mockRequire.stop('nicki');
     
-    t.ok(fn.calledWith(e), 'should call callback when nicki has error');
+    t.calledWith(fn, [e], 'should call callback when nicki has error');
     t.end();
 });
 
