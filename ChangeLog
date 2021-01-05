@@ -1,3 +1,13 @@
+2021.01.05, v8.0.0
+
+feature:
+- (package) supertape v4.4.0
+- (package) putout v13.1.2
+- (readify) drop support of node < 14
+- (package) madrun v8.0.0
+- (package) supertape v3.0.0
+
+
 2020.11.10, v7.0.6
 
 feature:
