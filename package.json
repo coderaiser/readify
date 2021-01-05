@@ -49,7 +49,7 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "engines": {
-    "node": ">=10"
+    "node": ">=14"
   },
   "devDependencies": {
     "@cloudcmd/stub": "^3.0.0",
