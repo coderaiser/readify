@@ -8,6 +8,8 @@
 [NPMURL]: https://npmjs.org/package/readify "npm"
 [DependencyStatusURL]: https://david-dm.org/coderaiser/readify "Dependency Status"
 [LicenseURL]: https://tldrlegal.com/license/mit-license "MIT License"
+[CoverageURL]: https://coveralls.io/github/coderaiser/readify?branch=master
+[CoverageIMGURL]: https://coveralls.io/repos/coderaiser/readify/badge.svg?branch=master&service=github
 
 Read directory content with file attributes: size, date, owner, mode and type.
 
@@ -82,6 +84,3 @@ readify('/', {type: 'raw', sort: 'size', order: 'desc'}).then(console.log);
 ## License
 
 MIT
-
-[CoverageURL]: https://coveralls.io/github/coderaiser/readify?branch=master
-[CoverageIMGURL]: https://coveralls.io/repos/coderaiser/readify/badge.svg?branch=master&service=github

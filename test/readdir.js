@@ -171,6 +171,50 @@ test('readdir: result: directory link', async (t) => {
     t.end();
 });
 
+test('readdir: result: zip link', async (t) => {
+    const name = 'hello.zip';
+    const mode = 16_893;
+    const size = 1024;
+    const mtime = new Date();
+    const uid = 1000;
+    
+    const readdir = () => [name];
+    
+    const info = {
+        isDirectory: stub().returns(false),
+        isSymbolicLink: stub().returns(true),
+        name,
+        mode,
+        size,
+        mtime,
+        uid,
+        ino: 1337,
+        dev: 1337,
+    };
+    
+    mockRequire('fs/promises', {
+        readdir,
+    });
+    mockRequire('superstat', async () => info);
+    
+    const expected = [{
+        name,
+        size,
+        date: mtime,
+        owner: uid,
+        mode,
+        type: 'archive-link',
+    }];
+    
+    const _readdir = reRequire('../lib/readdir');
+    const [, result] = await tryToCatch(_readdir, '.');
+    
+    stopAll();
+    
+    t.deepEqual(result, expected, 'should get raw values');
+    t.end();
+});
+
 test('readdir: result: directory link: no error', async (t) => {
     const {readdir} = fs.promises;
     
