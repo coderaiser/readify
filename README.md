@@ -1,11 +1,11 @@
 # Readify [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL] [![Build Status][BuildStatusIMGURL]][BuildStatusURL] [![Coverage Status][CoverageIMGURL]][CoverageURL]
 
 [NPMIMGURL]: https://img.shields.io/npm/v/readify.svg?style=flat
-[BuildStatusIMGURL]: https://img.shields.io/travis/coderaiser/readify/master.svg?style=flat
+[BuildStatusURL]: https://github.com/coderaiser/readify/actions?query=workflow%3A%22Node+CI%22 "Build Status"
+[BuildStatusIMGURL]: https://github.com/coderaiser/readify/workflows/Node%20CI/badge.svg
 [DependencyStatusIMGURL]: https://img.shields.io/david/coderaiser/readify.svg?style=flat
 [LicenseIMGURL]: https://img.shields.io/badge/license-MIT-317BF9.svg?style=flat
 [NPMURL]: https://npmjs.org/package/readify "npm"
-[BuildStatusURL]: https://travis-ci.org/coderaiser/readify "Build Status"
 [DependencyStatusURL]: https://david-dm.org/coderaiser/readify "Dependency Status"
 [LicenseURL]: https://tldrlegal.com/license/mit-license "MIT License"
 
