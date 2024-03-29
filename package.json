@@ -49,6 +49,7 @@
   "devDependencies": {
     "c8": "^9.1.0",
     "eslint": "^8.57.0",
+    "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-putout": "^22.5.0",
     "madrun": "^10.0.1",
