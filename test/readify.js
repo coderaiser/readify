@@ -1,13 +1,14 @@
 'use strict';
 
-const test = require('supertape');
-const stub = require('@cloudcmd/stub');
+const process = require('node:process');
+const {test, stub} = require('supertape');
+
 const tryToCatch = require('try-to-catch');
 const mockRequire = require('mock-require');
 const shortdate = require('shortdate');
-const {reRequire} = mockRequire;
 
 const readify = require('..');
+const {reRequire, stopAll} = mockRequire;
 
 test('readify: path: wrong', async (t) => {
     const [error] = await tryToCatch(readify, '/wrong/path');
@@ -24,10 +25,14 @@ test('readify: path: correct', async (t) => {
     t.equal(typeof json.path, 'string');
     t.ok(Array.isArray(json.files));
     t.end();
+}, {
+    checkAssertionsCount: false,
 });
 
 test('readify: type: wrong', async (t) => {
-    const [e] = await tryToCatch(readify, '.', {type: 1});
+    const [e] = await tryToCatch(readify, '.', {
+        type: 1,
+    });
     
     t.equal(e.message, 'type should be a string or not to be defined!', 'should throw when type has wrong type');
     t.end();
@@ -53,7 +58,8 @@ test('readify: result: should sort by name', async (t) => {
     
     const date = new Date('2017-01-12T08:31:58.308Z');
     const owner = 0;
-    const readdir = async () => [{
+    
+    const readdir = stub().resolves([{
         name: 'readdir.js',
         size: 1629,
         date,
@@ -65,7 +71,7 @@ test('readify: result: should sort by name', async (t) => {
         date,
         owner,
         mode: 33_204,
-    }];
+    }]);
     
     mockRequire('../lib/readdir', readdir);
     
@@ -73,6 +79,7 @@ test('readify: result: should sort by name', async (t) => {
     const [, result] = await tryToCatch(readify, '.');
     
     mockRequire.stop('../lib/readdir');
+    stopAll();
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
@@ -99,7 +106,7 @@ test('readify: result: raw', async (t) => {
         }],
     };
     
-    const readdir = async () => [{
+    const readdir = stub().resolves([{
         name: 'readdir.js',
         size: 1629,
         date,
@@ -111,14 +118,17 @@ test('readify: result: raw', async (t) => {
         date,
         owner,
         mode: 33_204,
-    }];
+    }]);
     
     mockRequire('../lib/readdir', readdir);
     const readify = reRequire('../lib/readify');
     
-    const result = await readify('.', {type: 'raw'});
+    const result = await readify('.', {
+        type: 'raw',
+    });
     
     mockRequire.stop('../lib/readdir');
+    stopAll();
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
@@ -132,14 +142,14 @@ test('readify: result: uid: 0', async (t) => {
     const owner = 0;
     const type = 'directory';
     
-    const readdir = async () => [{
+    const readdir = stub().resolves([{
         name,
         size,
         date: mtime,
         owner,
         mode,
         type,
-    }];
+    }]);
     
     mockRequire('../lib/readdir', readdir);
     
@@ -163,6 +173,7 @@ test('readify: result: uid: 0', async (t) => {
     const result = await readify('.');
     
     mockRequire.stop('../lib/readdir');
+    stopAll();
     
     t.deepEqual(result, expected, 'should get raw values');
     t.end();
@@ -176,14 +187,14 @@ test('readify: result: nicki: no name found', async (t) => {
     const owner = Math.random();
     const type = 'file';
     
-    const readdir = async () => [{
+    const readdir = stub().resolves([{
         name,
         size,
         date: mtime,
         owner,
         mode,
         type,
-    }];
+    }]);
     
     mockRequire('../lib/readdir', readdir);
     
@@ -207,6 +218,7 @@ test('readify: result: nicki: no name found', async (t) => {
     const result = await readify('.');
     
     mockRequire.stop('../lib/readdir');
+    stopAll();
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
@@ -216,10 +228,9 @@ test('result: files should have fields name, size, date, owner, mode, type', asy
     const {files} = await readify('.');
     
     const {length} = files;
-    const fields = files
-        .filter((file) => Object
-            .keys(file)
-            .join(':') === 'name:size:date:owner:mode:type');
+    const fields = files.filter((file) => Object
+        .keys(file)
+        .join(':') === 'name:size:date:owner:mode:type');
     
     t.equal(fields.length, length, 'files array do not have fields: name, size, date, owner, mode, type');
     t.end();
@@ -261,8 +272,9 @@ test('readify: nicki on win', async (t) => {
     });
     
     mockRequire.stop('nicki');
+    stopAll();
     
-    t.notOk(nicki.called, 'nicki should not be called');
+    t.notCalled(nicki, 'nicki should not be called');
     t.end();
 });
 
@@ -301,7 +313,7 @@ test('readify: result: sort: size (with dir)', async (t) => {
     };
     
     const date = new Date('2017-01-12T09:01:35.288Z');
-    const readdir = async () => [{
+    const readdir = stub().resolves([{
         name: 'readify.js',
         size: 3538,
         date,
@@ -329,29 +341,36 @@ test('readify: result: sort: size (with dir)', async (t) => {
         owner: 0,
         mode: 33_204,
         type: 'directory',
-    }];
+    }]);
     
     mockRequire('../lib/readdir', readdir);
     const readify = reRequire('../lib/readify');
     
     const sort = 'size';
-    const result = await readify('.', {sort});
+    const result = await readify('.', {
+        sort,
+    });
     
     mockRequire.stop('../lib/readdir');
+    stopAll();
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
 });
 
 test('readify: options: order: wrong', async (t) => {
-    const [e] = await tryToCatch(readify, '.', {order: 'wrong'});
+    const [e] = await tryToCatch(readify, '.', {
+        order: 'wrong',
+    });
     
     t.equal(e.message, 'order can be "asc" or "desc" only!', 'should throw when order is wrong');
     t.end();
 });
 
 test('readify: options: sort: wrong', async (t) => {
-    const [e] = await tryToCatch(readify, '.', {sort: 5});
+    const [e] = await tryToCatch(readify, '.', {
+        sort: 5,
+    });
     
     t.equal(e.message, 'sort should be a string!', 'should throw when sortBy not string');
     t.end();
@@ -365,10 +384,11 @@ test('readify: options: sort: name', async (t) => {
     ];
     
     const sort = 'name';
-    const data = await readify('./test/fixture/attr_sort', {sort});
-    const sorted = data.files.map((file) => {
-        return file.name;
+    const data = await readify('./test/fixture/attr_sort', {
+        sort,
     });
+    
+    const sorted = data.files.map((file) => file.name);
     
     t.deepEqual(sorted, files, 'should sort by name');
     t.end();
@@ -386,10 +406,14 @@ test('readify: sort: name: desc', async (t) => {
     
     const getName = ({name}) => name;
     
-    const data = await readify('./test/fixture/attr_sort', {sort, order});
+    const data = await readify('./test/fixture/attr_sort', {
+        sort,
+        order,
+    });
+    
     data.files = data.files.map(getName);
     
-    t.deepEqual(data.files, files, 'should equal');
+    t.deepEqual(data.files, files);
     t.end();
 });
 
@@ -400,7 +424,11 @@ test('readify sort: size asc', async (t) => {
         '2.txt',
     ];
     
-    const {files} = await readify('./test/fixture/attr_sort', {sort: 'size', order: 'asc'});
+    const {files} = await readify('./test/fixture/attr_sort', {
+        sort: 'size',
+        order: 'asc',
+    });
+    
     const sorted = files.map((file) => file.name);
     
     t.deepEqual(sorted, expected, 'correct order');
@@ -414,7 +442,11 @@ test('readify sort: size asc raw', async (t) => {
         '2.txt',
     ];
     
-    const data = await readify('./test/fixture/attr_sort', {sort: 'size', type: 'raw'});
+    const data = await readify('./test/fixture/attr_sort', {
+        sort: 'size',
+        type: 'raw',
+    });
+    
     data.files = data.files.map((file) => file.name);
     
     t.deepEqual(data.files, files, 'correct order');
@@ -435,6 +467,7 @@ test('readify: nicki: error ', async (t) => {
     await readify(__dirname);
     
     mockRequire.stop('nicki');
+    stopAll();
     
     t.calledWith(fn, [e], 'should call callback when nicki has error');
     t.end();
@@ -481,19 +514,20 @@ test('readify: nicki on android', async (t) => {
         type: 'file',
     }];
     
-    const readdir = async () => files;
+    const readdir = stub().resolves(files);
     
     mockRequire('../lib/readdir', readdir);
     const readify = reRequire('../lib/readify');
     const result = await readify('.');
+    
     const expected = {
         path: './',
         files,
     };
     
     mockRequire.stopAll();
+    stopAll();
     
     t.deepEqual(result, expected);
     t.end();
 });
-

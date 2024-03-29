@@ -1,12 +1,10 @@
-# Readify [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Dependency Status][DependencyStatusIMGURL]][DependencyStatusURL] [![Build Status][BuildStatusIMGURL]][BuildStatusURL] [![Coverage Status][CoverageIMGURL]][CoverageURL]
+# Readify [![License][LicenseIMGURL]][LicenseURL] [![NPM version][NPMIMGURL]][NPMURL] [![Build Status][BuildStatusIMGURL]][BuildStatusURL] [![Coverage Status][CoverageIMGURL]][CoverageURL]
 
 [NPMIMGURL]: https://img.shields.io/npm/v/readify.svg?style=flat
 [BuildStatusURL]: https://github.com/coderaiser/readify/actions?query=workflow%3A%22Node+CI%22 "Build Status"
 [BuildStatusIMGURL]: https://github.com/coderaiser/readify/workflows/Node%20CI/badge.svg
-[DependencyStatusIMGURL]: https://img.shields.io/david/coderaiser/readify.svg?style=flat
 [LicenseIMGURL]: https://img.shields.io/badge/license-MIT-317BF9.svg?style=flat
 [NPMURL]: https://npmjs.org/package/readify "npm"
-[DependencyStatusURL]: https://david-dm.org/coderaiser/readify "Dependency Status"
 [LicenseURL]: https://tldrlegal.com/license/mit-license "MIT License"
 [CoverageURL]: https://coveralls.io/github/coderaiser/readify?branch=master
 [CoverageIMGURL]: https://coveralls.io/repos/coderaiser/readify/badge.svg?branch=master&service=github
@@ -52,7 +50,9 @@ console.log(data);
     }],
 });
 
-readify('/', {type: 'raw'}).then(console.log);
+readify('/', {
+    type: 'raw',
+}).then(console.log);
 // output
 ({
     path: '/',
@@ -66,7 +66,11 @@ readify('/', {type: 'raw'}).then(console.log);
     }],
 });
 
-readify('/', {type: 'raw', sort: 'size', order: 'desc'}).then(console.log);
+readify('/', {
+    type: 'raw',
+    sort: 'size',
+    order: 'desc',
+}).then(console.log);
 // output
 ({
     path: '/',

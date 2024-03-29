@@ -2,16 +2,16 @@
 
 const fs = require('fs');
 
-const stub = require('@cloudcmd/stub');
-const test = require('supertape');
+const {test, stub} = require('supertape');
 const mockRequire = require('mock-require');
-const {reRequire, stopAll} = mockRequire;
-const tryToCatch = require('try-to-catch');
 
+const tryToCatch = require('try-to-catch');
+const {reRequire, stopAll} = mockRequire;
 const noop = () => {};
 
 test('readdir: empty dir', async (t) => {
     const {readdir} = fs.promises;
+    
     fs.promises.readdir = async () => [];
     
     const _readdir = reRequire('../lib/readdir');
@@ -31,9 +31,7 @@ test('readdir: empty stat', async (t) => {
         throw Error('some');
     });
     
-    fs.promises.readdir = async () => [
-        'hello',
-    ];
+    fs.promises.readdir = async () => ['hello'];
     
     const _readdir = reRequire('../lib/readdir');
     
@@ -245,4 +243,3 @@ test('readdir: result: directory link: no error', async (t) => {
     t.notOk(e, e?.message || 'should not receive error');
     t.end();
 });
-
