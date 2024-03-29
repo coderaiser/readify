@@ -1,3 +1,16 @@
+2024.03.29, v10.0.0
+
+feature:
+- 2b6413c readify: drop support of node < 18
+- ff9b38a readify: eslint-plugin-n v16.6.2
+- 300ac78 readify: eslint-plugin-putout v22.5.0
+- 2de9bc7 readify: madrun v10.0.1
+- 53810f6 readify: supertape v10.5.0
+- 943f96a readify: putout v35.7.6
+- f26b1cf readify: nodemon v3.1.0
+- 3e6e321 readify: eslint v8.57.0
+- d92788a readify: c8 v9.1.0
+
 2021.03.01, v9.0.0
 
 feature:
