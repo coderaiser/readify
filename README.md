@@ -53,6 +53,7 @@ console.log(data);
 readify('/', {
     type: 'raw',
 }).then(console.log);
+
 // output
 ({
     path: '/',
@@ -71,6 +72,7 @@ readify('/', {
     sort: 'size',
     order: 'desc',
 }).then(console.log);
+
 // output
 ({
     path: '/',
