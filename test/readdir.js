@@ -1,6 +1,6 @@
 'use strict';
 
-const fs = require('fs');
+const fs = require('node:fs');
 
 const {test, stub} = require('supertape');
 const mockRequire = require('mock-require');
