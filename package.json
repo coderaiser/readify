@@ -1,6 +1,6 @@
 {
   "name": "readify",
-  "version": "10.0.0",
+  "version": "10.0.1",
   "type": "commonjs",
   "author": "coderaiser <mnemonic.enemy@gmail.com> (https://github.com/coderaiser)",
   "description": "Read directory content with file attributes: size, date, owner, mode",

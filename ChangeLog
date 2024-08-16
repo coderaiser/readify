@@ -1,3 +1,11 @@
+2024.08.16, v10.0.1
+
+feature:
+- cba73a1 readify: @cloudcmd/formatify v2.0.0
+- 76b6045 readify: putout v36.0.3
+- a4597a1 readify: eslint v9.9.0
+- 0511e66 readify: c8 v10.1.2
+
 2024.03.29, v10.0.0
 
 feature:
