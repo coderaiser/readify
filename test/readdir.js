@@ -14,8 +14,7 @@ test('readdir: empty dir', async (t) => {
     
     fs.promises.readdir = async () => [];
     
-    const _readdir = reRequire('../lib/readdir');
-    
+    const _readdir = reRequire('../lib/readdir');    
     const [, result] = await tryToCatch(_readdir, '.');
     
     fs.promises.readdir = readdir;
