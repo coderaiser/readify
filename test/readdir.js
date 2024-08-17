@@ -14,7 +14,7 @@ test('readdir: empty dir', async (t) => {
     
     fs.promises.readdir = async () => [];
     
-    const _readdir = reRequire('../lib/readdir');    
+    const _readdir = reRequire('../lib/readdir');
     const [, result] = await tryToCatch(_readdir, '.');
     
     fs.promises.readdir = readdir;
@@ -189,7 +189,7 @@ test('readdir: result: zip link', async (t) => {
         dev: 1337,
     };
     
-    mockRequire('fs/promises', {
+    mockRequire('node:fs/promises', {
         readdir,
     });
     mockRequire('superstat', async () => info);
