@@ -2,8 +2,4 @@
 
 const {safeAlign} = require('eslint-plugin-putout/config');
 
-module.exports = [
-    ...safeAlign, {
-        rules: {},
-    },
-];
+module.exports = safeAlign;
