@@ -7,7 +7,7 @@
   "homepage": "http://github.com/coderaiser/readify",
   "repository": {
     "type": "git",
-    "url": "git://github.com/coderaiser/readify.git"
+    "url": "git+https://github.com/coderaiser/readify.git"
   },
   "scripts": {
     "lint": "madrun lint",
