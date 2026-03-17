@@ -3,12 +3,10 @@
 const process = require('node:process');
 const {test, stub} = require('supertape');
 
-const tryToCatch = require('try-to-catch');
-const mockRequire = require('mock-require');
+const {tryToCatch} = require('try-to-catch');
 const shortdate = require('shortdate');
 
 const readify = require('..');
-const {reRequire, stopAll} = mockRequire;
 
 test('readify: path: wrong', async (t) => {
     const [error] = await tryToCatch(readify, '/wrong/path');
@@ -73,13 +71,9 @@ test('readify: result: should sort by name', async (t) => {
         mode: 33_204,
     }]);
     
-    mockRequire('../lib/readdir', readdir);
-    
-    const readify = reRequire('../lib/readify');
-    const [, result] = await tryToCatch(readify, '.');
-    
-    mockRequire.stop('../lib/readdir');
-    stopAll();
+    const [, result] = await tryToCatch(readify, '.', {
+        readdir,
+    });
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
@@ -120,15 +114,10 @@ test('readify: result: raw', async (t) => {
         mode: 33_204,
     }]);
     
-    mockRequire('../lib/readdir', readdir);
-    const readify = reRequire('../lib/readify');
-    
     const result = await readify('.', {
         type: 'raw',
+        readdir,
     });
-    
-    mockRequire.stop('../lib/readdir');
-    stopAll();
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
@@ -151,7 +140,9 @@ test('readify: result: uid: 0', async (t) => {
         type,
     }]);
     
-    mockRequire('../lib/readdir', readdir);
+    const result = await readify('.', {
+        readdir,
+    });
     
     const date = shortdate(mtime, {
         order: 'little',
@@ -169,23 +160,21 @@ test('readify: result: uid: 0', async (t) => {
         }],
     };
     
-    const readify = reRequire('..');
-    const result = await readify('.');
-    
-    mockRequire.stop('../lib/readdir');
-    stopAll();
-    
     t.deepEqual(result, expected, 'should get raw values');
     t.end();
 });
 
 test('readify: result: nicki: no name found', async (t) => {
     const name = 'hello.txt';
-    const mode = 16_893;
-    const size = 1024;
     const mtime = new Date();
     const owner = Math.random();
+    const size = 1024;
+    const mode = 16_893;
     const type = 'file';
+    
+    const date = shortdate(mtime, {
+        order: 'little',
+    });
     
     const readdir = stub().resolves([{
         name,
@@ -196,10 +185,8 @@ test('readify: result: nicki: no name found', async (t) => {
         type,
     }]);
     
-    mockRequire('../lib/readdir', readdir);
-    
-    const date = shortdate(mtime, {
-        order: 'little',
+    const result = await readify('.', {
+        readdir,
     });
     
     const expected = {
@@ -213,12 +200,6 @@ test('readify: result: nicki: no name found', async (t) => {
             type: 'file',
         }],
     };
-    
-    const readify = reRequire('..');
-    const result = await readify('.');
-    
-    mockRequire.stop('../lib/readdir');
-    stopAll();
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
@@ -261,20 +242,15 @@ test('readify: nicki on win', async (t) => {
     
     const nicki = stub();
     
-    mockRequire('nicki', nicki);
-    
-    const readify = reRequire('..');
-    
-    await readify(__dirname);
+    await readify(__dirname, {
+        nicki,
+    });
     
     Object.defineProperty(process, 'platform', {
         value: 'linux',
     });
     
-    mockRequire.stop('nicki');
-    stopAll();
-    
-    t.notCalled(nicki, 'nicki should not be called');
+    t.calledWithNoArgs(nicki, 'nicki should be called');
     t.end();
 });
 
@@ -313,6 +289,7 @@ test('readify: result: sort: size (with dir)', async (t) => {
     };
     
     const date = new Date('2017-01-12T09:01:35.288Z');
+    
     const readdir = stub().resolves([{
         name: 'readify.js',
         size: 3538,
@@ -343,16 +320,12 @@ test('readify: result: sort: size (with dir)', async (t) => {
         type: 'directory',
     }]);
     
-    mockRequire('../lib/readdir', readdir);
-    const readify = reRequire('../lib/readify');
-    
     const sort = 'size';
+    
     const result = await readify('.', {
         sort,
+        readdir,
     });
-    
-    mockRequire.stop('../lib/readdir');
-    stopAll();
     
     t.deepEqual(result, expected, 'should get values');
     t.end();
@@ -384,6 +357,7 @@ test('readify: options: sort: name', async (t) => {
     ];
     
     const sort = 'name';
+    
     const data = await readify('./test/fixture/attr_sort', {
         sort,
     });
@@ -456,18 +430,15 @@ test('readify sort: size asc raw', async (t) => {
 test('readify: nicki: error ', async (t) => {
     const fn = stub();
     const e = Error('nicki error');
+    
     const nicki = async () => {
         fn(e);
         throw e;
     };
     
-    mockRequire('nicki', nicki);
-    const readify = reRequire('..');
-    
-    await readify(__dirname);
-    
-    mockRequire.stop('nicki');
-    stopAll();
+    await readify(__dirname, {
+        nicki,
+    });
     
     t.calledWith(fn, [e], 'should call callback when nicki has error');
     t.end();
@@ -476,14 +447,14 @@ test('readify: nicki: error ', async (t) => {
 test('readify: nicki on android', async (t) => {
     const fn = stub();
     const e = Error('nicki error');
+    
     const nicki = async () => {
         fn(e);
         throw e;
     };
     
-    mockRequire('nicki', nicki);
-    
     const date = new Date('2017-01-12T09:01:35.288Z');
+    
     const files = [{
         name: 'lib',
         size: '4kb',
@@ -516,17 +487,15 @@ test('readify: nicki on android', async (t) => {
     
     const readdir = stub().resolves(files);
     
-    mockRequire('../lib/readdir', readdir);
-    const readify = reRequire('../lib/readify');
-    const result = await readify('.');
+    const result = await readify('.', {
+        nicki,
+        readdir,
+    });
     
     const expected = {
         path: './',
         files,
     };
-    
-    mockRequire.stopAll();
-    stopAll();
     
     t.deepEqual(result, expected);
     t.end();

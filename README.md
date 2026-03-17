@@ -33,7 +33,7 @@ npm i readify
 
 ```js
 const readify = require('readify');
-const tryToCatch = require('try-to-catch');
+const {tryToCatch} = require('try-to-catch');
 
 const [error, data] = await tryToCatch(readify, '/');
 console.log(data);

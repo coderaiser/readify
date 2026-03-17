@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const {test, stub} = require('supertape');
 const mockRequire = require('mock-require');
 
-const tryToCatch = require('try-to-catch');
+const {tryToCatch} = require('try-to-catch');
 const {reRequire, stopAll} = mockRequire;
 const noop = () => {};
 
@@ -30,7 +30,9 @@ test('readdir: empty stat', async (t) => {
         throw Error('some');
     });
     
-    fs.promises.readdir = async () => ['hello'];
+    fs.promises.readdir = async () => [
+        'hello',
+    ];
     
     const _readdir = reRequire('../lib/readdir');
     
@@ -62,7 +64,9 @@ test('readdir: result', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    fs.promises.readdir = async () => [name];
+    fs.promises.readdir = async () => [
+        name,
+    ];
     
     mockRequire('superstat', async () => ({
         isDirectory: noop,
@@ -102,7 +106,9 @@ test('readdir: result: no error', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    fs.promises.readdir = () => [name];
+    fs.promises.readdir = () => [
+        name,
+    ];
     
     mockRequire('superstat', async () => ({
         isDirectory: noop,
@@ -133,7 +139,9 @@ test('readdir: result: directory link', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    fs.promises.readdir = () => [name];
+    fs.promises.readdir = () => [
+        name,
+    ];
     
     const info = {
         isDirectory: stub().returns(true),
@@ -175,7 +183,9 @@ test('readdir: result: zip link', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    const readdir = () => [name];
+    const readdir = () => [
+        name,
+    ];
     
     const info = {
         isDirectory: stub().returns(false),
@@ -221,7 +231,9 @@ test('readdir: result: directory link: no error', async (t) => {
     const mtime = new Date();
     const uid = 1000;
     
-    fs.promises.readdir = () => [name];
+    fs.promises.readdir = () => [
+        name,
+    ];
     
     mockRequire('superstat', async () => ({
         isDirectory: stub.returns(true),
