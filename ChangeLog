@@ -1,3 +1,23 @@
+2026.03.17, v11.0.0
+
+feature:
+- 7a5a512 readify: drop support of node < 22
+- affeb7e readify: migrate to ESM
+- e7ae40e readdir: get rid of mock-require
+- b460323 readify: export: default -> named
+- f0ea5c7 readify: get rid of mock-require
+- aebe67e readify: try-to-catch v4.0.5
+- d177938 readify: try-catch v4.0.9
+- beb6869 readify: supertape v12.10.5
+- f7e52c0 readify: putout v42.2.3
+- 9ebc9e9 readify: madrun v13.0.1
+- 7a10046 readify: eslint-plugin-putout v31.1.1
+- 519aaba readify: eslint v10.0.3
+- 611e819 readify: @cloudcmd/formatify v3.0.0
+- 8cf2542 readify: superc8 v12.3.1
+- 22a59d7 readify: putout v37.1.0
+- e59d19f readify: eslint-plugin-putout v23.3.0
+
 2024.08.16, v10.0.1
 
 feature:
