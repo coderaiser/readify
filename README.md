@@ -32,7 +32,8 @@ npm i readify
 ## Examples
 
 ```js
-const readify = require('readify');
+import {readify} from 'readify';
+
 const {tryToCatch} = require('try-to-catch');
 
 const [error, data] = await tryToCatch(readify, '/');

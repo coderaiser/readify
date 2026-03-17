@@ -6,7 +6,7 @@ const {test, stub} = require('supertape');
 const {tryToCatch} = require('try-to-catch');
 const shortdate = require('shortdate');
 
-const readify = require('..');
+const {readify} = require('..');
 
 test('readify: path: wrong', async (t) => {
     const [error] = await tryToCatch(readify, '/wrong/path');
