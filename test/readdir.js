@@ -1,9 +1,6 @@
-'use strict';
-
-const {test, stub} = require('supertape');
-
-const {tryToCatch} = require('try-to-catch');
-const {readdir: _readdir} = require('../lib/readdir');
+import {test, stub} from 'supertape';
+import {tryToCatch} from 'try-to-catch';
+import {readdir as _readdir} from '../lib/readdir.js';
 
 const noop = () => {};
 

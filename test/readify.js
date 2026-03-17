@@ -1,12 +1,13 @@
-'use strict';
+import process from 'node:process';
+import {fileURLToPath} from 'node:url';
+import {dirname} from 'node:path';
+import {test, stub} from 'supertape';
+import {tryToCatch} from 'try-to-catch';
+import shortdate from 'shortdate';
+import {readify} from '../lib/readify.js';
 
-const process = require('node:process');
-const {test, stub} = require('supertape');
-
-const {tryToCatch} = require('try-to-catch');
-const shortdate = require('shortdate');
-
-const {readify} = require('..');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 test('readify: path: wrong', async (t) => {
     const [error] = await tryToCatch(readify, '/wrong/path');
