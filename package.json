@@ -44,7 +44,7 @@
   "license": "MIT",
   "main": "lib/readify.js",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "devDependencies": {
     "eslint": "^10.0.3",
