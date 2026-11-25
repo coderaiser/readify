@@ -38,6 +38,7 @@ const {tryToCatch} = require('try-to-catch');
 
 const [error, data] = await tryToCatch(readify, '/');
 console.log(data);
+
 // output
 ({
     path: '/',
