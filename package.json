@@ -53,7 +53,7 @@
     "nodemon": "^3.1.0",
     "putout": "^42.2.3",
     "superc8": "^12.3.1",
-    "supertape": "^12.10.5",
+    "supertape": "^13.6.2",
     "try-catch": "^4.0.9"
   },
   "publishConfig": {
