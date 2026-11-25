@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@cloudcmd/formatify": "^3.0.0",
-    "@cloudcmd/sortify": "^2.0.0",
+    "@cloudcmd/sortify": "^3.1.0",
     "currify": "^4.0.0",
     "format-io": "^2.0.0",
     "nicki": "^6.0.0",
