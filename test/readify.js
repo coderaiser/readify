@@ -21,7 +21,11 @@ test('readify: path: correct', async (t) => {
     
     t.notOk(error, 'no error');
     t.ok(json, 'json');
-    t.equal(typeof json.path, 'string');
+    
+    const result = typeof json.path;
+    const expected = 'string';
+    
+    t.equal(result, expected);
     t.ok(Array.isArray(json.files));
     t.end();
 }, {
@@ -224,8 +228,9 @@ test('result: file names should not be empty', async (t) => {
     
     const noFileName = ({name}) => !name;
     const result = files.filter(noFileName);
+    const expected = [];
     
-    t.deepEqual(result, []);
+    t.deepEqual(result, expected);
     t.end();
 });
 
@@ -363,7 +368,11 @@ test('readify: options: sort: name', async (t) => {
         sort,
     });
     
-    const sorted = data.files.map((file) => file.name);
+    const sorted = [];
+    
+    for (const file of data.files) {
+        sorted.push(file.name);
+    }
     
     t.deepEqual(sorted, files, 'should sort by name');
     t.end();
@@ -404,7 +413,11 @@ test('readify sort: size asc', async (t) => {
         order: 'asc',
     });
     
-    const sorted = files.map((file) => file.name);
+    const sorted = [];
+    
+    for (const file of files) {
+        sorted.push(file.name);
+    }
     
     t.deepEqual(sorted, expected, 'correct order');
     t.end();
