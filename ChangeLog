@@ -1,3 +1,9 @@
+2026.11.25, v11.0.1
+
+feature:
+- 2b95a02 readify: supertape v13.6.2
+- 0904a6f readify: @cloudcmd/sortify v3.1.0
+
 2026.03.17, v11.0.0
 
 feature:
