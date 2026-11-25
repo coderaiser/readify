@@ -9,6 +9,10 @@ import {readify} from '../lib/readify.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const getTime = (date) => date
+    .toTimeString()
+    .slice(0, 8);
+
 test('readify: path: wrong', async (t) => {
     const [error] = await tryToCatch(readify, '/wrong/path');
     
@@ -48,12 +52,14 @@ test('readify: result: should sort by name', async (t) => {
             name: '.readify.js',
             size: '3.46kb',
             date: '12.01.2017',
+            time: getTime(new Date('2017-01-12T08:31:58.308Z')),
             owner: 'root',
             mode: 'rw- rw- r--',
         }, {
             name: 'readdir.js',
             size: '1.59kb',
             date: '12.01.2017',
+            time: getTime(new Date('2017-01-12T08:31:58.308Z')),
             owner: 'root',
             mode: 'rw- rw- r--',
         }],
@@ -159,6 +165,7 @@ test('readify: result: uid: 0', async (t) => {
             name,
             size: '1.00kb',
             date,
+            time: getTime(mtime),
             owner: 'root',
             mode: 'rwx rwx r-x',
             type,
@@ -200,6 +207,7 @@ test('readify: result: nicki: no name found', async (t) => {
             name,
             size: '1.00kb',
             date,
+            time: getTime(mtime),
             owner,
             mode: 'rwx rwx r-x',
             type: 'file',
@@ -210,15 +218,15 @@ test('readify: result: nicki: no name found', async (t) => {
     t.end();
 });
 
-test('result: files should have fields name, size, date, owner, mode, type', async (t) => {
+test('result: files should have fields name, size, date, owner, mode, type, time', async (t) => {
     const {files} = await readify('.');
     
     const {length} = files;
     const fields = files.filter((file) => Object
         .keys(file)
-        .join(':') === 'name:size:date:owner:mode:type');
+        .join(':') === 'name:size:date:owner:mode:type:time');
     
-    t.equal(fields.length, length, 'files array do not have fields: name, size, date, owner, mode, type');
+    t.equal(fields.length, length, 'files array do not have fields: name, size, date, owner, mode, type, time');
     t.end();
 });
 
@@ -267,6 +275,7 @@ test('readify: result: sort: size (with dir)', async (t) => {
             name: 'test',
             size: '4kb',
             date: '12.01.2017',
+            time: getTime(new Date('2017-01-12T09:01:35.288Z')),
             owner: 'root',
             mode: 'rw- rw- r--',
             type: 'directory',
@@ -274,6 +283,7 @@ test('readify: result: sort: size (with dir)', async (t) => {
             name: 'lib',
             size: '4kb',
             date: '12.01.2017',
+            time: getTime(new Date('2017-01-12T09:01:35.288Z')),
             owner: 'root',
             mode: 'rw- rw- r--',
             type: 'directory',
@@ -281,6 +291,7 @@ test('readify: result: sort: size (with dir)', async (t) => {
             name: 'readdir.js',
             size: '1.59kb',
             date: '12.01.2017',
+            time: getTime(new Date('2017-01-12T09:01:35.288Z')),
             owner: 'root',
             mode: 'rw- rw- r--',
             type: 'file',
@@ -288,6 +299,7 @@ test('readify: result: sort: size (with dir)', async (t) => {
             name: 'readify.js',
             size: '3.46kb',
             date: '12.01.2017',
+            time: getTime(new Date('2017-01-12T09:01:35.288Z')),
             owner: 'root',
             mode: 'rw- rw- r--',
             type: 'file',
@@ -506,9 +518,24 @@ test('readify: nicki on android', async (t) => {
         readdir,
     });
     
+    const toFormatted = (name, size, type) => ({
+        name,
+        size,
+        date: '12.01.2017',
+        time: getTime(date),
+        owner: 0,
+        mode: 'rw- rw- r--',
+        type,
+    });
+    
     const expected = {
         path: './',
-        files,
+        files: [
+            toFormatted('lib', '4kb', 'directory'),
+            toFormatted('test', '4kb', 'directory'),
+            toFormatted('readdir.js', '1.59kb', 'file'),
+            toFormatted('readify.js', '3.46kb', 'file'),
+        ],
     };
     
     t.deepEqual(result, expected);
